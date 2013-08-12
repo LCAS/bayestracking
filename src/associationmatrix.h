@@ -152,12 +152,12 @@ public:
    /**
     * Vector of unmatched rows indexes
     */
-   std::vector< uint > URow;
+   std::vector< size_t > URow;
 
    /**
     * Vector of unmatched columns indexes
     */
-   std::vector< uint > UCol;
+   std::vector< size_t > UCol;
 
 private:
    size_t RowSize;   // matrix row size

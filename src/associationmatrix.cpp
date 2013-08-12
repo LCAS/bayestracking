@@ -144,11 +144,11 @@ void AssociationMatrix::computeNN(measure_t measure)
         // loop until the set of selected elements covers all the rows or columns
         while (!URow.empty() && !UCol.empty()) {
             double min = DBL_MAX;
-            vector< uint >::iterator min_ri, riEnd = URow.end();
-            vector< uint >::iterator min_ci, ciEnd = UCol.end();
+            vector< size_t >::iterator min_ri, riEnd = URow.end();
+            vector< size_t >::iterator min_ci, ciEnd = UCol.end();
             // find the matrix element with minimum value
-            for (vector< uint >::iterator ri = URow.begin(); ri != riEnd; ri++) {
-                for (vector< uint >::iterator ci = UCol.begin(); ci != ciEnd; ci++) {
+            for (vector< size_t >::iterator ri = URow.begin(); ri != riEnd; ri++) {
+                for (vector< size_t >::iterator ci = UCol.begin(); ci != ciEnd; ci++) {
                     if ((*this)[*ri][*ci] < min) {
                         // found new minimum, store it with its indexes
                         min = (*this)[*ri][*ci];
@@ -174,11 +174,11 @@ void AssociationMatrix::computeNN(measure_t measure)
         // loop until the set of selected elements covers all the rows or columns
         while (!URow.empty() && !UCol.empty()) {
             double max = 0.;
-            vector< uint >::iterator max_ri, riEnd = URow.end();
-            vector< uint >::iterator max_ci, ciEnd = UCol.end();
+            vector< size_t >::iterator max_ri, riEnd = URow.end();
+            vector< size_t >::iterator max_ci, ciEnd = UCol.end();
             // find the matrix element with maximum value
-            for (vector< uint >::iterator ri = URow.begin(); ri != riEnd; ri++) {
-                for (vector< uint >::iterator ci = UCol.begin(); ci != ciEnd; ci++) {
+            for (vector< size_t >::iterator ri = URow.begin(); ri != riEnd; ri++) {
+                for (vector< size_t >::iterator ci = UCol.begin(); ci != ciEnd; ci++) {
                     if ((*this)[*ri][*ci] > max) {
                         // found new maximum, store it with its indexes
                         max = (*this)[*ri][*ci];

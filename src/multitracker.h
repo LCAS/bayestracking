@@ -64,7 +64,7 @@ private:
   std::vector<filter_t> m_filters;
   int m_filterNum;
   sequence_t m_observations;            // observations
-  std::vector<uint> m_unmatched;        // unmatched observations
+  std::vector<size_t> m_unmatched;      // unmatched observations
   std::vector<FM::Vec> m_prevUnmatched; // previously unmatched observations
   std::map<int, int> m_assignments;     // assignment < observation, target >
   std::vector<sequence_t> m_sequences;  // vector of unmatched observation sequences
@@ -315,7 +315,7 @@ private:
   void createTracks(ObservationModelType& om)
   {
     // create new tracks from unmatched observations
-    std::vector<uint>::iterator ui = m_unmatched.begin();
+    std::vector<size_t>::iterator ui = m_unmatched.begin();
     while (ui != m_unmatched.end()) {
       std::vector<sequence_t>::iterator si = m_sequences.begin();
       bool matched = false;
@@ -351,7 +351,7 @@ private:
     }
     
     // memorize remaining unmatched observations
-    std::vector<uint>::iterator uiEnd = m_unmatched.end();
+    std::vector<size_t>::iterator uiEnd = m_unmatched.end();
     for (ui = m_unmatched.begin() ; ui != uiEnd; ui++) {
       sequence_t s;
       s.push_back(m_observations[*ui]);
