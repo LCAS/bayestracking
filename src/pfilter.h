@@ -130,7 +130,7 @@ public:
     * @param z_pred Predicted observation (return)
     * @param R_pred Predicted observation covariance (return)
     */
-   void predict_observation(Correlated_addative_observe_model& observe_model,
+   void predict_observation(Correlated_additive_observe_model& observe_model,
                             FM::Vec& z_pred, FM::SymMatrix& R_pred);
                            
   /**

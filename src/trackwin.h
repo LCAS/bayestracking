@@ -128,7 +128,7 @@ public:
   void saveSnapshot(const char* filename);
 
 public:
-  static const double NO_ORIENTATION = DBL_MAX;
+  static const double NO_ORIENTATION;
   
 private:
   int m_winWidth;

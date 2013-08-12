@@ -3,8 +3,7 @@ cmake_minimum_required(VERSION 2.6)
 set(CPACK_PACKAGE_NAME "bayestracking")
 set(VERSION "1.0.0")
 
-include_directories($ENV{HOME}/local/include)
-link_directories($ENV{HOME}/local/lib /usr/local/lib)
+include_directories(${CMAKE_SOURCE_DIR}/src)
 
 add_subdirectory(src)
 

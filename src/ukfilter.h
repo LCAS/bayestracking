@@ -65,8 +65,8 @@ public:
     * @param observe_model 
     * @param z 
     */
-   void update(Addative_predict_model& predict_model,
-               Correlated_addative_observe_model& observe_model,
+   void update(Additive_predict_model& predict_model,
+               Correlated_additive_observe_model& observe_model,
                const FM::Vec& z);
 
    /**
@@ -75,7 +75,7 @@ public:
     * @param z_pred Predicted observation (return)
     * @param R_pred Predicted observation covariance (return)
     */
-   void predict_observation(Correlated_addative_observe_model& observe_model,
+   void predict_observation(Correlated_additive_observe_model& observe_model,
                             FM::Vec& z_pred, FM::SymMatrix& R_pred);
                            
    /**
@@ -84,7 +84,7 @@ public:
     * @param si Innovation
     * @param Si Modified innovation covariance
     */
-   Bayes_base::Float observeInnovation(Correlated_addative_observe_model& h,
+   Bayes_base::Float observeInnovation(Correlated_additive_observe_model& h,
       const Vec& si, const SymMatrix& Si);
       
    /**

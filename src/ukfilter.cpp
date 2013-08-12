@@ -66,8 +66,8 @@ void UKFilter::init(const FM::Vec& x0, const FM::SymMatrix& P0)
 }
 
 
-void UKFilter::update(Addative_predict_model& predict_model,
-                      Correlated_addative_observe_model& observe_model,
+void UKFilter::update(Additive_predict_model& predict_model,
+                      Correlated_additive_observe_model& observe_model,
                       const FM::Vec& z)
 {
     predict(predict_model);
@@ -75,7 +75,7 @@ void UKFilter::update(Addative_predict_model& predict_model,
 }
 
 
-void UKFilter::predict_observation(Correlated_addative_observe_model& observe_model, FM::Vec& z_pred, FM::SymMatrix& R_pred)
+void UKFilter::predict_observation(Correlated_additive_observe_model& observe_model, FM::Vec& z_pred, FM::SymMatrix& R_pred)
 {
     std::size_t z_size = z_pred.size();
     ColMatrix zXX(z_size, 2*x_size+1);
@@ -93,10 +93,10 @@ void UKFilter::predict_observation(Correlated_addative_observe_model& observe_mo
     // Predict points of XX using supplied observation model
     {
         Vec zXXi(z_size), zXX0(z_size);
-        zXX0 = static_cast<Correlated_addative_observe_model&>(observe_model).h( column(XX,0) );
+        zXX0 = static_cast<Correlated_additive_observe_model&>(observe_model).h( column(XX,0) );
         column(zXX,0) = zXX0;
         for (std::size_t i = 1; i < XX.size2(); ++i) {
-            zXXi = static_cast<Correlated_addative_observe_model&>(observe_model).h( column(XX,i) );
+            zXXi = static_cast<Correlated_additive_observe_model&>(observe_model).h( column(XX,i) );
             // Normalise relative to zXX0
             observe_model.normalise (zXXi, zXX0);
             column(zXX,i) = zXXi;
@@ -152,7 +152,7 @@ void UKFilter::predict_observation(Correlated_addative_observe_model& observe_mo
 }
 
 
-Bayes_base::Float UKFilter::observeInnovation(Correlated_addative_observe_model& h, const Vec& si, const SymMatrix& Si)
+Bayes_base::Float UKFilter::observeInnovation(Correlated_additive_observe_model& h, const Vec& si, const SymMatrix& Si)
 /*
  * Observation fusion
  *  Pre : x,X

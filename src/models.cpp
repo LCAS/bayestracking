@@ -119,7 +119,7 @@ void CVModel::updateJacobian(const FM::Vec& x) {
 
 const Vec& CVModel::fw(const FM::Vec& x) const
 /*
-   * Definition of sampler for addative noise model given state x
+   * Definition of sampler for additive noise model given state x
    *  Generate Gaussian correlated samples
    * Precond: init_GqG, automatic on first use
    */
@@ -176,9 +176,9 @@ CartesianModel::CartesianModel(Float xSD, Float ySD) :
 }
 
 Bayes_base::Float
- CartesianModel::Likelihood_correlated::L(const Correlated_addative_observe_model& model, const FM::Vec& z, const FM::Vec& zp) const
+ CartesianModel::Likelihood_correlated::L(const Correlated_additive_observe_model& model, const FM::Vec& z, const FM::Vec& zp) const
 /*
- * Definition of likelihood given an addative Gaussian observation model:
+ * Definition of likelihood given an additive Gaussian observation model:
  *  p(z|x) = exp(-0.5*(z-h(x))'*inv(Z)*(z-h(x))) / sqrt(2pi^nz*det(Z));
  *  L(x) the the Likelihood L(x) doesn't depend on / sqrt(2pi^nz) for constant z size
  * Precond: Observation Information: z,Z_inv,detZterm
@@ -197,7 +197,7 @@ Bayes_base::Float
 }
 
 
-void CartesianModel::Likelihood_correlated::Lz (const Correlated_addative_observe_model& model)
+void CartesianModel::Likelihood_correlated::Lz (const Correlated_additive_observe_model& model)
 /* Set the observation zz and Z about which to evaluate the Likelihood function
  * Postcond: Observation Information: z,Z_inv,detZterm
  */

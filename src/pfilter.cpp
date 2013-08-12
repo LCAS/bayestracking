@@ -95,7 +95,7 @@ void PFilter::predict(Sampled_predict_model& predict_model)
 }
 
 
-void PFilter::predict_observation(Correlated_addative_observe_model& observe_model, FM::Vec& z_pred, FM::SymMatrix& R_pred)
+void PFilter::predict_observation(Correlated_additive_observe_model& observe_model, FM::Vec& z_pred, FM::SymMatrix& R_pred)
 {
     z_pred.clear();   // mean
     const std::size_t nSamples = S.size2();

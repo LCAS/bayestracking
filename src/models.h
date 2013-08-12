@@ -97,7 +97,7 @@ public:
   CVModel(Float wxSD, Float wySD);
 
   /**
-  * Definition of sampler for addative noise model given state x
+  * Definition of sampler for additive noise model given state x
   *  Generate Gaussian correlated samples
   * Precond: init_GqG, automatic on first use
   */
@@ -161,7 +161,7 @@ public:
   CartesianModel(Float xSD, Float ySD);
 
   virtual Float L(const FM::Vec& x) const
-  // Definition of likelihood for addative noise model given zz
+  // Definition of likelihood for additive noise model given zz
   {  return li.L(*this, z, h(x));
   }
 
@@ -205,9 +205,9 @@ private:
     Float logdetZ;       // log(det(Z)
     bool zset;
     static Float scaled_vector_square(const FM::Vec& v, const FM::SymMatrix& V);
-    Float L(const Correlated_addative_observe_model& model, const FM::Vec& z, const FM::Vec& zp) const;
-    // Definition of likelihood for addative noise model given zz
-    void Lz(const Correlated_addative_observe_model& model);
+    Float L(const Correlated_additive_observe_model& model, const FM::Vec& z, const FM::Vec& zp) const;
+    // Definition of likelihood for additive noise model given zz
+    void Lz(const Correlated_additive_observe_model& model);
   };
   Likelihood_correlated li;
 };

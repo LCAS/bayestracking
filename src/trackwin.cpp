@@ -20,6 +20,7 @@
 #include "trackwin.h"
 #include <iostream>
 
+const double TrackWin::NO_ORIENTATION=DBL_MAX;
 
 TrackWin::TrackWin(const char* name, int width, int height, double scale)
 {
