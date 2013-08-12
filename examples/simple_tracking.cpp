@@ -35,7 +35,7 @@ using namespace MTRK;
 using namespace Models;
 
 
-typedef UKFilter Filter;
+typedef PFilter Filter;
 const int numOfTarget = 3;
 const association_t alg = NNJPDA;
 
