@@ -7,6 +7,21 @@ include_directories(${CMAKE_SOURCE_DIR}/src)
 
 add_subdirectory(src)
 
+OPTION (BAYESTRACKING_CREATE_PKGCONFIG "Creates a pkg-config file" ON)
+if(BAYESTRACKING_CREATE_PKGCONFIG)
+  message(STATUS "Created pkg-config file: ${CMAKE_CURRENT_BINARY_DIR}/pkgconfig/bayestracking.pc")
+  configure_file(
+    ${CMAKE_CURRENT_SOURCE_DIR}/pkgconfig/bayestracking.pc.in
+    ${CMAKE_CURRENT_BINARY_DIR}/pkgconfig/bayestracking.pc
+    @ONLY
+  )
+
+  install(FILES
+    ${CMAKE_CURRENT_BINARY_DIR}/pkgconfig/bayestracking.pc
+    DESTINATION ${CMAKE_INSTALL_PREFIX}/lib/pkgconfig/
+  )
+endif(BAYESTRACKING_CREATE_PKGCONFIG)
+
 OPTION (BAYESTRACKING_BUILD_EXAMPLES "Enables compilation of the examples" OFF)
 if(BAYESTRACKING_BUILD_EXAMPLES)
   add_subdirectory(examples)
