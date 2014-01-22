@@ -5,7 +5,7 @@ includedir=${prefix}/include
 
 Name: bayestracking
 Description: BayesTracking - a library for Bayesian tracking
-Version: 0.1
+Version: @VERSION@
 Cflags: -I${includedir}/bayestracking
 Libs: -L${libdir} -lbayestracking
 

@@ -7,20 +7,38 @@ include_directories(${CMAKE_SOURCE_DIR}/src)
 
 add_subdirectory(src)
 
-OPTION (BAYESTRACKING_CREATE_PKGCONFIG "Creates a pkg-config file" ON)
+OPTION (BAYESTRACKING_CREATE_PKGCONFIG "Create pkg-config file" ON)
 if(BAYESTRACKING_CREATE_PKGCONFIG)
-  message(STATUS "Created pkg-config file: ${CMAKE_CURRENT_BINARY_DIR}/pkgconfig/bayestracking.pc")
+  message(STATUS "Created pkg-config file: ${CMAKE_INSTALL_PREFIX}/lib/pkgconfig/bayestracking.pc")
   configure_file(
-    ${CMAKE_CURRENT_SOURCE_DIR}/pkgconfig/bayestracking.pc.in
-    ${CMAKE_CURRENT_BINARY_DIR}/pkgconfig/bayestracking.pc
+    ${CMAKE_CURRENT_SOURCE_DIR}/config/bayestracking.pc.in
+    ${CMAKE_CURRENT_BINARY_DIR}/config/bayestracking.pc
     @ONLY
   )
-
   install(FILES
-    ${CMAKE_CURRENT_BINARY_DIR}/pkgconfig/bayestracking.pc
+    ${CMAKE_CURRENT_BINARY_DIR}/config/bayestracking.pc
     DESTINATION ${CMAKE_INSTALL_PREFIX}/lib/pkgconfig/
   )
 endif(BAYESTRACKING_CREATE_PKGCONFIG)
+
+OPTION (BAYESTRACKING_CREATE_CMAKE_CONFIG "Create cmake config files" ON)
+if(BAYESTRACKING_CREATE_CMAKE_CONFIG)
+  message(STATUS "Created cmake config files: ${CMAKE_INSTALL_PREFIX}/lib/cmake/bayestracking")
+  export(TARGETS bayestracking
+    FILE "${CMAKE_CURRENT_BINARY_DIR}/config/BayestrackingTargets.cmake")
+  export(PACKAGE Bayestracking)
+  set(CONF_INCLUDE_DIRS "${CMAKE_INSTALL_PREFIX}/include/bayestracking")
+  configure_file(${CMAKE_CURRENT_SOURCE_DIR}/config/BayestrackingConfig.cmake.in
+    "${CMAKE_CURRENT_BINARY_DIR}/config/BayestrackingConfig.cmake" @ONLY)
+  configure_file(${CMAKE_CURRENT_SOURCE_DIR}/config/BayestrackingConfigVersion.cmake.in
+    "${CMAKE_CURRENT_BINARY_DIR}/config/BayestrackingConfigVersion.cmake" @ONLY)
+  install(FILES
+    "${CMAKE_CURRENT_BINARY_DIR}/config/BayestrackingConfig.cmake"
+    "${CMAKE_CURRENT_BINARY_DIR}/config/BayestrackingConfigVersion.cmake"
+    DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/cmake/bayestracking" COMPONENT dev)
+  install(EXPORT BayestrackingTargets DESTINATION
+    "${CMAKE_INSTALL_PREFIX}/lib/cmake/bayestracking" COMPONENT dev)
+endif(BAYESTRACKING_CREATE_CMAKE_CONFIG)
 
 OPTION (BAYESTRACKING_BUILD_EXAMPLES "Enables compilation of the examples" OFF)
 if(BAYESTRACKING_BUILD_EXAMPLES)
