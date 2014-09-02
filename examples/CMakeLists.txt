@@ -1,4 +1,4 @@
-include_directories(../src)
+include_directories(../include)
 
 add_executable(simple_tracking simple_tracking.cpp)
 

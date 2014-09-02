@@ -1,55 +1,24 @@
 <?xml version="1.0"?>
 <package>
   <name>bayestracking</name>
-  <version>0.0.0</version>
-  <description>The bayestracking package</description>
+  <version>1.0.0</version>
+  <description>The bayestracking package uses extended or unscented Kalman filters to track movement. The constant velocity model has been designed to track the movement of people in cartesian space in particular.</description>
 
-  <!-- One maintainer tag required, multiple allowed, one person per tag --> 
-  <!-- Example:  -->
-  <!-- <maintainer email="jane.doe@example.com">Jane Doe</maintainer> -->
-  <maintainer email="cdondrup@todo.todo">cdondrup</maintainer>
+  <maintainer email="cdondrup@lincoln.ac.uk">Christian Dondrup</maintainer>
+  <maintainer email="mhanheide@lincoln.ac.uk">Marc Hanheide</maintainer>
+  
+  <license>MIT</license>
 
+  <url type="git">https://github.com/LCAS/bayestracking</url>
+  <url type="doi">http://dx.doi.org/10.5281/zenodo.10318</url>
 
-  <!-- One license tag required, multiple allowed, one license per tag -->
-  <!-- Commonly used license strings: -->
-  <!--   BSD, MIT, Boost Software License, GPLv2, GPLv3, LGPLv2.1, LGPLv3 -->
-  <license>TODO</license>
-
-
-  <!-- Url tags are optional, but mutiple are allowed, one per tag -->
-  <!-- Optional attribute type can be: website, bugtracker, or repository -->
-  <!-- Example: -->
-  <!-- <url type="website">http://ros.org/wiki/strands_pedestrian_localisation</url> -->
-
-
-  <!-- Author tags are optional, mutiple are allowed, one per tag -->
-  <!-- Authors do not have to be maintianers, but could be -->
-  <!-- Example: -->
-  <!-- <author email="jane.doe@example.com">Jane Doe</author> -->
-
-
-  <!-- The *_depend tags are used to specify dependencies -->
-  <!-- Dependencies can be catkin packages or system dependencies -->
-  <!-- Examples: -->
-  <!-- Use build_depend for packages you need at compile time: -->
-  <!--   <build_depend>message_generation</build_depend> -->
-  <!-- Use buildtool_depend for build tool packages: -->
-  <!--   <buildtool_depend>catkin</buildtool_depend> -->
-  <!-- Use run_depend for packages you need at runtime: -->
-  <!--   <run_depend>message_runtime</run_depend> -->
-  <!-- Use test_depend for packages you need only for testing: -->
-  <!--   <test_depend>gtest</test_depend> -->
+  <author email="nbellotto@lincoln.ac.uk">Nicola Bellotto</author>
+  
   <buildtool_depend>catkin</buildtool_depend>
-  <build_depend>roscpp</build_depend>
-  <run_depend>roscpp</run_depend>
+  <build_depend>libblas-dev</build_depend>
+  <build_depend>opencv2</build_depend>
+  <run_depend>libblas-dev</run_depend>
+  <run_depend>opencv2</run_depend>
 
-
-  <!-- The export tag contains other, unspecified, tags -->
-  <export>
-    <!-- You can specify that this package is a metapackage here: -->
-    <!-- <metapackage/> -->
-
-    <!-- Other tools can request additional information be placed here -->
-
-  </export>
+  <export/>
 </package>

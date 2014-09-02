@@ -3,25 +3,27 @@ project(bayestracking)
 set(CPACK_PACKAGE_NAME "bayestracking")
 set(VERSION "1.0.0")
 
-## Find catkin macros and libraries
-## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
-## is used, also find other catkin packages
-find_package(catkin REQUIRED COMPONENTS
-    roscpp
-)
+## Find catkin macros and libraries if installed
+find_package(catkin QUIET)
+## Use catkin macros and include dirs
+if(catkin_FOUND)
+  message(STATUS "Found catkin")
+  catkin_package(
+    INCLUDE_DIRS include 
+    LIBRARIES ${PROJECT_NAME}
+  )
+  include_directories(
+    ${catkin_INCLUDE_DIRS}
+  )
+else(catkin_FOUND)
+    message(STATUS "NOT found catkin")
+endif(catkin_FOUND)
 
-catkin_package(
-  INCLUDE_DIRS include 
-  LIBRARIES ${PROJECT_NAME}
-  #CATKIN_DEPENDS 
-  #DEPENDS 
-)
-
+## Headers
 include_directories(
     include
-    ${catkin_INCLUDE_DIRS}
 )
-
+## Source files
 add_library(${PROJECT_NAME} STATIC 
     src/bayestracking/associationmatrix.cpp 
     src/bayestracking/ekfilter.cpp 
@@ -43,39 +45,55 @@ add_library(${PROJECT_NAME} STATIC
     src/bayestracking/BayesFilter/unsFlt.cpp
 )
 
-target_link_libraries(${PROJECT_NAME}
-  ${catkin_LIBRARIES}
-)
+## Link catkin libraries and set install targets
+if(catkin_FOUND)
+  target_link_libraries(${PROJECT_NAME}
+    ${catkin_LIBRARIES}
+  )
 
-#OPTION (BAYESTRACKING_BUILD_EXAMPLES "Enables compilation of the examples" OFF)
-#if(BAYESTRACKING_BUILD_EXAMPLES)
-  #add_subdirectory(examples)
-#endif(BAYESTRACKING_BUILD_EXAMPLES)
+  install(TARGETS ${PROJECT_NAME}
+    ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+    LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+    RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+  )
 
-#OPTION (BAYESTRACKING_BUILD_DOC "Generates API documentation" OFF)
-#if(BAYESTRACKING_BUILD_DOC)
-   #check if doxygen is even installed
-  #find_package(Doxygen)
-  #if (DOXYGEN_FOUND STREQUAL "NO")
-      #message(FATAL_ERROR "Doxygen not found. Please get a copy http://www.doxygen.org")
-  #endif (DOXYGEN_FOUND STREQUAL "NO")
+  install(DIRECTORY include/${PROJECT_NAME}/
+    DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
+    PATTERN ".svn" EXCLUDE
+  )
+endif(catkin_FOUND)
 
-   #prepare doxygen configuration file
-  #configure_file(${CMAKE_SOURCE_DIR}/Doxyfile.in ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile)
+## Optional builds: example
+OPTION (BAYESTRACKING_BUILD_EXAMPLES "Enables compilation of the examples" OFF)
+if(BAYESTRACKING_BUILD_EXAMPLES)
+  add_subdirectory(examples)
+endif(BAYESTRACKING_BUILD_EXAMPLES)
 
-   #add doxygen as target
-  #add_custom_target(doc ALL ${DOXYGEN_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile
-  #COMMENT "Generating API documentation with Doxygen" VERBATIM)
+## Optional builds: documentation
+OPTION (BAYESTRACKING_BUILD_DOC "Generates API documentation" OFF)
+if(BAYESTRACKING_BUILD_DOC)
+  ## Check if doxygen is even installed
+  find_package(Doxygen)
+  if (DOXYGEN_FOUND STREQUAL "NO")
+      message(FATAL_ERROR "Doxygen not found. Please get a copy http://www.doxygen.org")
+  endif (DOXYGEN_FOUND STREQUAL "NO")
 
-   #cleanup $build/doc on "make clean"
-  #set_property(DIRECTORY APPEND PROPERTY
-        #ADDITIONAL_MAKE_CLEAN_FILES doc)
+  ## Prepare doxygen configuration file
+  configure_file(${CMAKE_SOURCE_DIR}/Doxyfile.in ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile)
 
-   #install HTML API documentation and manual pages
-  #set(DOC_PATH "share/doc/${CPACK_PACKAGE_NAME}-${VERSION}")
+  ## Add doxygen as target
+  add_custom_target(doc ALL ${DOXYGEN_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile
+  COMMENT "Generating API documentation with Doxygen" VERBATIM)
 
-  #install(DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/doc/html
-    #DESTINATION ${DOC_PATH}
-  #)
+  ## Cleanup $build/doc on "make clean"
+  set_property(DIRECTORY APPEND PROPERTY
+        ADDITIONAL_MAKE_CLEAN_FILES doc)
 
-#endif(BAYESTRACKING_BUILD_DOC)
+  ## Install HTML API documentation and manual pages
+  set(DOC_PATH "share/doc/${CPACK_PACKAGE_NAME}-${VERSION}")
+
+  install(DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/doc/html
+    DESTINATION ${DOC_PATH}
+  )
+
+endif(BAYESTRACKING_BUILD_DOC)
