@@ -2,8 +2,8 @@
 Changelog for package bayes_tracking
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+1.0.1 (2014-09-02)
+------------------
 * Merge pull request `#4 <https://github.com/cdondrup/bayestracking/issues/4>`_ from cdondrup/master
   Renamed `bayestracking` to `bayes_tracking` to comply with ros naming conventions.
 * Renamed `bayestracking` to `bayes_tracking` to comply with ros naming conventions.
