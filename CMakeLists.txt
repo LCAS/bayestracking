@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(bayes_tracking)
 set(CPACK_PACKAGE_NAME "bayes_tracking")
-set(VERSION "1.0.0")
+set(VERSION "1.0.1")
 
 ## Find catkin macros and libraries if installed
 find_package(catkin QUIET)
