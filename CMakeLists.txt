@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 2.8.3)
-project(bayestracking)
-set(CPACK_PACKAGE_NAME "bayestracking")
+project(bayes_tracking)
+set(CPACK_PACKAGE_NAME "bayes_tracking")
 set(VERSION "1.0.0")
 
 ## Find catkin macros and libraries if installed
@@ -25,24 +25,24 @@ include_directories(
 )
 ## Source files
 add_library(${PROJECT_NAME} STATIC 
-    src/bayestracking/associationmatrix.cpp 
-    src/bayestracking/ekfilter.cpp 
-    src/bayestracking/ukfilter.cpp 
-    src/bayestracking/pfilter.cpp 
-    src/bayestracking/trackwin.cpp 
-    src/bayestracking/models.cpp
-    src/bayestracking/BayesFilter/bayesFltAlg.cpp
-    src/bayestracking/BayesFilter/bayesFlt.cpp
-    src/bayestracking/BayesFilter/CIFlt.cpp
-    src/bayestracking/BayesFilter/covFlt.cpp
-    src/bayestracking/BayesFilter/infFlt.cpp
-    src/bayestracking/BayesFilter/infRtFlt.cpp
-    src/bayestracking/BayesFilter/itrFlt.cpp
-    src/bayestracking/BayesFilter/matSup.cpp
-    src/bayestracking/BayesFilter/SIRFlt.cpp
-    src/bayestracking/BayesFilter/UDFlt.cpp
-    src/bayestracking/BayesFilter/UdU.cpp
-    src/bayestracking/BayesFilter/unsFlt.cpp
+    src/bayes_tracking/associationmatrix.cpp 
+    src/bayes_tracking/ekfilter.cpp 
+    src/bayes_tracking/ukfilter.cpp 
+    src/bayes_tracking/pfilter.cpp 
+    src/bayes_tracking/trackwin.cpp 
+    src/bayes_tracking/models.cpp
+    src/bayes_tracking/BayesFilter/bayesFltAlg.cpp
+    src/bayes_tracking/BayesFilter/bayesFlt.cpp
+    src/bayes_tracking/BayesFilter/CIFlt.cpp
+    src/bayes_tracking/BayesFilter/covFlt.cpp
+    src/bayes_tracking/BayesFilter/infFlt.cpp
+    src/bayes_tracking/BayesFilter/infRtFlt.cpp
+    src/bayes_tracking/BayesFilter/itrFlt.cpp
+    src/bayes_tracking/BayesFilter/matSup.cpp
+    src/bayes_tracking/BayesFilter/SIRFlt.cpp
+    src/bayes_tracking/BayesFilter/UDFlt.cpp
+    src/bayes_tracking/BayesFilter/UdU.cpp
+    src/bayes_tracking/BayesFilter/unsFlt.cpp
 )
 
 ## Link catkin libraries and set install targets

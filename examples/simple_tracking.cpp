@@ -18,13 +18,13 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include "bayestracking/multitracker.h"
-#include "bayestracking/models.h"
-#include "bayestracking/ekfilter.h"
-#include "bayestracking/ukfilter.h"
-#include "bayestracking/pfilter.h"
+#include "bayes_tracking/multitracker.h"
+#include "bayes_tracking/models.h"
+#include "bayes_tracking/ekfilter.h"
+#include "bayes_tracking/ukfilter.h"
+#include "bayes_tracking/pfilter.h"
 #include <sys/time.h>
-#include "bayestracking/trackwin.h"
+#include "bayes_tracking/trackwin.h"
 #include <cstdio>
 
 #define SLEEP_TIME 10000  // sleep time in [us]
