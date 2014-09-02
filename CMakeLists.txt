@@ -1,70 +1,95 @@
+cmake_minimum_required(VERSION 2.8.3)
 project(bayestracking)
-cmake_minimum_required(VERSION 2.6)
 set(CPACK_PACKAGE_NAME "bayestracking")
 set(VERSION "1.0.0")
 
-include_directories(${CMAKE_SOURCE_DIR}/src)
-
-add_subdirectory(src)
-
-OPTION (BAYESTRACKING_CREATE_PKGCONFIG "Create pkg-config file" ON)
-if(BAYESTRACKING_CREATE_PKGCONFIG)
-  message(STATUS "Created pkg-config file: ${CMAKE_INSTALL_PREFIX}/lib/pkgconfig/bayestracking.pc")
-  configure_file(
-    ${CMAKE_CURRENT_SOURCE_DIR}/config/bayestracking.pc.in
-    ${CMAKE_CURRENT_BINARY_DIR}/config/bayestracking.pc
-    @ONLY
+## Find catkin macros and libraries if installed
+find_package(catkin QUIET)
+## Use catkin macros and include dirs
+if(catkin_FOUND)
+  message(STATUS "Found catkin")
+  catkin_package(
+    INCLUDE_DIRS include 
+    LIBRARIES ${PROJECT_NAME}
   )
-  install(FILES
-    ${CMAKE_CURRENT_BINARY_DIR}/config/bayestracking.pc
-    DESTINATION ${CMAKE_INSTALL_PREFIX}/lib/pkgconfig/
+  include_directories(
+    ${catkin_INCLUDE_DIRS}
   )
-endif(BAYESTRACKING_CREATE_PKGCONFIG)
+else(catkin_FOUND)
+    message(STATUS "NOT found catkin")
+endif(catkin_FOUND)
 
-OPTION (BAYESTRACKING_CREATE_CMAKE_CONFIG "Create cmake config files" ON)
-if(BAYESTRACKING_CREATE_CMAKE_CONFIG)
-  message(STATUS "Created cmake config files: ${CMAKE_INSTALL_PREFIX}/lib/cmake/bayestracking")
-  export(TARGETS bayestracking
-    FILE "${CMAKE_CURRENT_BINARY_DIR}/config/BayestrackingTargets.cmake")
-  export(PACKAGE Bayestracking)
-  set(CONF_INCLUDE_DIRS "${CMAKE_INSTALL_PREFIX}/include/bayestracking")
-  configure_file(${CMAKE_CURRENT_SOURCE_DIR}/config/BayestrackingConfig.cmake.in
-    "${CMAKE_CURRENT_BINARY_DIR}/config/BayestrackingConfig.cmake" @ONLY)
-  configure_file(${CMAKE_CURRENT_SOURCE_DIR}/config/BayestrackingConfigVersion.cmake.in
-    "${CMAKE_CURRENT_BINARY_DIR}/config/BayestrackingConfigVersion.cmake" @ONLY)
-  install(FILES
-    "${CMAKE_CURRENT_BINARY_DIR}/config/BayestrackingConfig.cmake"
-    "${CMAKE_CURRENT_BINARY_DIR}/config/BayestrackingConfigVersion.cmake"
-    DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/cmake/bayestracking" COMPONENT dev)
-  install(EXPORT BayestrackingTargets DESTINATION
-    "${CMAKE_INSTALL_PREFIX}/lib/cmake/bayestracking" COMPONENT dev)
-endif(BAYESTRACKING_CREATE_CMAKE_CONFIG)
+## Headers
+include_directories(
+    include
+)
+## Source files
+add_library(${PROJECT_NAME} STATIC 
+    src/bayestracking/associationmatrix.cpp 
+    src/bayestracking/ekfilter.cpp 
+    src/bayestracking/ukfilter.cpp 
+    src/bayestracking/pfilter.cpp 
+    src/bayestracking/trackwin.cpp 
+    src/bayestracking/models.cpp
+    src/bayestracking/BayesFilter/bayesFltAlg.cpp
+    src/bayestracking/BayesFilter/bayesFlt.cpp
+    src/bayestracking/BayesFilter/CIFlt.cpp
+    src/bayestracking/BayesFilter/covFlt.cpp
+    src/bayestracking/BayesFilter/infFlt.cpp
+    src/bayestracking/BayesFilter/infRtFlt.cpp
+    src/bayestracking/BayesFilter/itrFlt.cpp
+    src/bayestracking/BayesFilter/matSup.cpp
+    src/bayestracking/BayesFilter/SIRFlt.cpp
+    src/bayestracking/BayesFilter/UDFlt.cpp
+    src/bayestracking/BayesFilter/UdU.cpp
+    src/bayestracking/BayesFilter/unsFlt.cpp
+)
 
+## Link catkin libraries and set install targets
+if(catkin_FOUND)
+  target_link_libraries(${PROJECT_NAME}
+    ${catkin_LIBRARIES}
+  )
+
+  install(TARGETS ${PROJECT_NAME}
+    ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+    LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+    RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+  )
+
+  install(DIRECTORY include/${PROJECT_NAME}/
+    DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
+    PATTERN ".svn" EXCLUDE
+  )
+endif(catkin_FOUND)
+
+## Optional builds: example
 OPTION (BAYESTRACKING_BUILD_EXAMPLES "Enables compilation of the examples" OFF)
 if(BAYESTRACKING_BUILD_EXAMPLES)
   add_subdirectory(examples)
 endif(BAYESTRACKING_BUILD_EXAMPLES)
 
+## Optional builds: documentation
 OPTION (BAYESTRACKING_BUILD_DOC "Generates API documentation" OFF)
 if(BAYESTRACKING_BUILD_DOC)
-  # check if doxygen is even installed
+  ## Check if doxygen is even installed
   find_package(Doxygen)
   if (DOXYGEN_FOUND STREQUAL "NO")
       message(FATAL_ERROR "Doxygen not found. Please get a copy http://www.doxygen.org")
   endif (DOXYGEN_FOUND STREQUAL "NO")
 
-  # prepare doxygen configuration file
+  ## Prepare doxygen configuration file
   configure_file(${CMAKE_SOURCE_DIR}/Doxyfile.in ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile)
 
-  # add doxygen as target
+  ## Add doxygen as target
   add_custom_target(doc ALL ${DOXYGEN_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile
   COMMENT "Generating API documentation with Doxygen" VERBATIM)
 
-  # cleanup $build/doc on "make clean"
+  ## Cleanup $build/doc on "make clean"
   set_property(DIRECTORY APPEND PROPERTY
         ADDITIONAL_MAKE_CLEAN_FILES doc)
 
-  # install HTML API documentation and manual pages
+  ## Install HTML API documentation and manual pages
   set(DOC_PATH "share/doc/${CPACK_PACKAGE_NAME}-${VERSION}")
 
   install(DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/doc/html
