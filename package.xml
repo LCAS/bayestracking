@@ -15,8 +15,10 @@
   <author email="nbellotto@lincoln.ac.uk">Nicola Bellotto</author>
   
   <buildtool_depend>catkin</buildtool_depend>
+  <build_depend>boost</build_depend>
   <build_depend>libblas-dev</build_depend>
   <build_depend>opencv2</build_depend>
+  <run_depend>boost</run_depend>
   <run_depend>libblas-dev</run_depend>
   <run_depend>opencv2</run_depend>
 
