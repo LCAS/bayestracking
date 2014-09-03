@@ -2,6 +2,11 @@
 Changelog for package bayes_tracking
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Adding boost as a build an run dependency.
+* Contributors: Christian Dondrup
+
 1.0.1 (2014-09-02)
 ------------------
 * Merge pull request `#4 <https://github.com/cdondrup/bayestracking/issues/4>`_ from cdondrup/master
