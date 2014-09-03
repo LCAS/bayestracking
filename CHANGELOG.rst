@@ -5,6 +5,7 @@ Changelog for package bayes_tracking
 1.0.2 (2014-09-03)
 ------------------
 * Adding boost as a build an run dependency.
+* Changing Licence to GPL
 * Contributors: Christian Dondrup
 
 1.0.1 (2014-09-02)
