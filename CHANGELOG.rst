@@ -8,6 +8,21 @@ Changelog for package bayes_tracking
 * Changing Licence to GPL
 * Contributors: Christian Dondrup
 
+Forthcoming
+-----------
+* "Fixing" the missing JPDA
+  The option of using only JPDA as an association algorithm was a relic from past development and is not supported anymore.
+  This change just comments the JPDA in the enum, preventing people from trying to use it.
+* Using the correct licence now.
+* 1.0.2
+* Updated changelog for 1.0.2
+* Adding boost as a build an run dependency.
+* 1.0.1
+* Reverting the version number increase.
+* Merge pull request `#5 <https://github.com/LCAS/bayestracking/issues/5>`_ from cdondrup/master
+  Release preparations
+* Contributors: Christian Dondrup
+
 1.0.1 (2014-09-02)
 ------------------
 * Merge pull request `#4 <https://github.com/cdondrup/bayestracking/issues/4>`_ from cdondrup/master
