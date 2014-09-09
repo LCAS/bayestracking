@@ -8,8 +8,8 @@ Changelog for package bayes_tracking
 * Changing Licence to GPL
 * Contributors: Christian Dondrup
 
-Forthcoming
------------
+1.0.3 (2014-09-09)
+------------------
 * "Fixing" the missing JPDA
   The option of using only JPDA as an association algorithm was a relic from past development and is not supported anymore.
   This change just comments the JPDA in the enum, preventing people from trying to use it.
