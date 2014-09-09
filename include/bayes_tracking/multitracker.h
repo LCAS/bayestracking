@@ -39,7 +39,7 @@ struct observation_t {
 };
 
 typedef std::vector<observation_t> sequence_t;
-typedef enum {NN, JPDA, NNJPDA} association_t;
+typedef enum {NN, /*JPDA,*/ NNJPDA} association_t;
 
 // to be defined by user
 template<class FilterType>
