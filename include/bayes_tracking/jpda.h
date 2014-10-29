@@ -149,13 +149,13 @@ public:
          vector< size_t > sub(sizes.begin()+1, sizes.end());
          MultiMatrix< Element > m(sub);
          for (size_t i = 0; i < extent; i++) {
-            push_back(m);
+            this->push_back(m);
          }
       }
       else {
          MultiMatrix< Element > m(Empty);
          for (size_t i = 0; i < extent; i++) {
-            push_back(m);
+            this->push_back(m);
          }
       }
    }
