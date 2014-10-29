@@ -8,6 +8,13 @@ Changelog for package bayes_tracking
 * Changing Licence to GPL
 * Contributors: Christian Dondrup
 
+Forthcoming
+-----------
+* Merge pull request `#8 <https://github.com/LCAS/bayestracking/issues/8>`_ from LCAS/opencv
+  Changing dependency from opencv2 to cv_bridge for indigo release.
+* Changing dependency from opencv2 to cv_bridge for indigo release.
+* Contributors: Christian Dondrup
+
 1.0.3 (2014-09-09)
 ------------------
 * "Fixing" the missing JPDA
