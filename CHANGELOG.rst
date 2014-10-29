@@ -8,6 +8,13 @@ Changelog for package bayes_tracking
 * Changing Licence to GPL
 * Contributors: Christian Dondrup
 
+Forthcoming
+-----------
+* Merge pull request `#9 <https://github.com/LCAS/bayestracking/issues/9>`_ from LCAS/indigo-fix
+  Trusty/Indigo fix
+* Trusty/Indigo fix
+* Contributors: Christian Dondrup
+
 1.0.4 (2014-10-29)
 ------------------
 * Merge pull request `#8 <https://github.com/LCAS/bayestracking/issues/8>`_ from LCAS/opencv
