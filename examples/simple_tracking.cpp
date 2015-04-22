@@ -111,7 +111,7 @@ int main(int argc, char *argv[]) {
   
   MultiTracker<Filter, 4> mtrk;    // state [x, v_x, y, v_y]
   CVModel cvm(5.0, 5.0);           // CV model with sigma_x = sigma_y = 5.0
-  CartesianModel ctm(0.5, 0.5);              // Cartesian observation model
+  CartesianModel3D ctm(0.5, 0.5);              // Cartesian observation model
   FM::Vec observation(2);          // observation [x, y]
   vector<FM::Vec> obsvBuffer;      // observation buffer
 
