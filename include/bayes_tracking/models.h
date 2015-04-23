@@ -148,7 +148,7 @@ class CartesianModel : public JacobianModel,
 {
 public:
   /** Size of the state vector */
-  static const std::size_t x_size = X_SIZE;
+  static const std::size_t x_size = 4;
   /** Size of the observation vector */
   static const std::size_t z_size = 2;
   /** Predicted observation */
