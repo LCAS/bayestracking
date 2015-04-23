@@ -152,6 +152,93 @@ void CVModel::init_GqG() const
    }
 }
 
+
+
+//*************************************************************************
+//                  2D CARTESIAN SUBTRACTION OBSERVATION MODEL
+//*************************************************************************
+
+CartesianModel::CartesianModel(Float xSD, Float ySD) :
+   Linrz_correlated_observe_model(x_size, z_size),
+   Likelihood_observe_model(z_size),
+   z_pred(z_size),
+   li(z_size)
+{
+  // Hx = | 1  0  0  0 |
+  //      | 0  0  1  0 |
+  Hx.clear();
+  Hx(0,0) = 1.;
+  Hx(1,2) = 1.;
+  // noise
+  Z.clear();
+  Z(0,0) = sqr(xSD);
+  Z(1,1) = sqr(ySD);
+}
+
+Bayes_base::Float
+ CartesianModel::Likelihood_correlated::L(const Correlated_additive_observe_model& model, const FM::Vec& z, const FM::Vec& zp) const
+/*
+ * Definition of likelihood given an additive Gaussian observation model:
+ *  p(z|x) = exp(-0.5*(z-h(x))'*inv(Z)*(z-h(x))) / sqrt(2pi^nz*det(Z));
+ *  L(x) the the Likelihood L(x) doesn't depend on / sqrt(2pi^nz) for constant z size
+ * Precond: Observation Information: z,Z_inv,detZterm
+ */
+{
+   if (!zset)
+      Bayes_base::error (Logic_exception ("BGSubModel used without Lz set"));
+               // Normalised innovation
+   zInnov = z;
+   model.normalise (zInnov, zp);
+   FM::noalias(zInnov) -= zp;
+
+   Float logL = scaled_vector_square(zInnov, Z_inv);
+   using namespace std;
+   return exp(Float(-0.5)*(logL + z.size()*log(2*M_PI) + logdetZ));   // normalized likelihood
+}
+
+
+void CartesianModel::Likelihood_correlated::Lz (const Correlated_additive_observe_model& model)
+/* Set the observation zz and Z about which to evaluate the Likelihood function
+ * Postcond: Observation Information: z,Z_inv,detZterm
+ */
+{
+   zset = true;
+                  // Compute inverse of Z and its reciprocal condition number
+   Float detZ;
+   Float rcond = FM::UdUinversePD (Z_inv, detZ, model.Z);
+   model.rclimit.check_PD(rcond, "Z not PD in observe");
+                  // detZ > 0 as Z PD
+   using namespace std;
+   logdetZ = log(detZ);
+}
+
+
+Bayes_base::Float
+ CartesianModel::Likelihood_correlated::scaled_vector_square(const FM::Vec& v, const FM::SymMatrix& V)
+/*
+ * Compute covariance scaled square inner product of a Vector: v'*V*v
+ */
+{
+   return FM::inner_prod(v, FM::prod(V,v));
+}
+
+
+const FM::Vec& CartesianModel::h(const FM::Vec& x) const
+{
+  z_pred[0] = x[0];
+  z_pred[1] = x[2];
+  return z_pred;
+};
+   
+
+void CartesianModel::updateJacobian(const FM::Vec& x) {
+  // nothing to do
+}
+
+
+void CartesianModel::normalise(FM::Vec& z_denorm, const FM::Vec& z_from) const {
+}
+
 //*************************************************************************
 //                      CV 3D PREDICTION MODEL
 //*************************************************************************
@@ -305,92 +392,7 @@ void CVModel3D::init_GqG() const
    }
 }
 
-//*************************************************************************
-//                  2D CARTESIAN SUBTRACTION OBSERVATION MODEL
-//*************************************************************************
 
-CartesianModel::CartesianModel(Float xSD, Float ySD) :
-   Linrz_correlated_observe_model(x_size, z_size),
-   Likelihood_observe_model(z_size),
-   z_pred(z_size),
-   li(z_size)
-{
-  // Hx = | 1  0  0  0 |
-  //      | 0  0  1  0 |
-  Hx.clear();
-  Hx(0,0) = 1.;
-  Hx(1,2) = 1.;
-  // noise
-  Z.clear();
-  Z(0,0) = sqr(xSD);
-  Z(1,1) = sqr(ySD);
-}
-
-Bayes_base::Float
- CartesianModel::Likelihood_correlated::L(const Correlated_additive_observe_model& model, const FM::Vec& z, const FM::Vec& zp) const
-/*
- * Definition of likelihood given an additive Gaussian observation model:
- *  p(z|x) = exp(-0.5*(z-h(x))'*inv(Z)*(z-h(x))) / sqrt(2pi^nz*det(Z));
- *  L(x) the the Likelihood L(x) doesn't depend on / sqrt(2pi^nz) for constant z size
- * Precond: Observation Information: z,Z_inv,detZterm
- */
-{
-   if (!zset)
-      Bayes_base::error (Logic_exception ("BGSubModel used without Lz set"));
-               // Normalised innovation
-   zInnov = z;
-   model.normalise (zInnov, zp);
-   FM::noalias(zInnov) -= zp;
-
-   Float logL = scaled_vector_square(zInnov, Z_inv);
-   using namespace std;
-   return exp(Float(-0.5)*(logL + z.size()*log(2*M_PI) + logdetZ));   // normalized likelihood
-}
-
-
-void CartesianModel::Likelihood_correlated::Lz (const Correlated_additive_observe_model& model)
-/* Set the observation zz and Z about which to evaluate the Likelihood function
- * Postcond: Observation Information: z,Z_inv,detZterm
- */
-{
-   zset = true;
-                  // Compute inverse of Z and its reciprocal condition number
-   Float detZ;
-   Float rcond = FM::UdUinversePD (Z_inv, detZ, model.Z);
-   model.rclimit.check_PD(rcond, "Z not PD in observe");
-                  // detZ > 0 as Z PD
-   using namespace std;
-   logdetZ = log(detZ);
-}
-
-
-Bayes_base::Float
- CartesianModel::Likelihood_correlated::scaled_vector_square(const FM::Vec& v, const FM::SymMatrix& V)
-/*
- * Compute covariance scaled square inner product of a Vector: v'*V*v
- */
-{
-   return FM::inner_prod(v, FM::prod(V,v));
-}
-
-
-const FM::Vec& CartesianModel::h(const FM::Vec& x) const
-{
-  z_pred[0] = x[0];
-  z_pred[1] = x[2];
-  return z_pred;
-};
-
-
-void CartesianModel::updateJacobian(const FM::Vec& x) {
-  // nothing to do
-}
-
-
-void CartesianModel::normalise(FM::Vec& z_denorm, const FM::Vec& z_from) const {
-}
-
-// @TODO: LOGIC CODE HERE
 //*************************************************************************
 //                 3D  CARTESIAN SUBTRACTION OBSERVATION MODEL
 //*************************************************************************
