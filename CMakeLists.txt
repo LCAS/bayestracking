@@ -63,11 +63,7 @@ if(catkin_FOUND)
   )
 endif(catkin_FOUND)
 
-## Optional builds: example
-OPTION (BAYESTRACKING_BUILD_EXAMPLES "Enables compilation of the examples" OFF)
-if(BAYESTRACKING_BUILD_EXAMPLES)
-  add_subdirectory(examples)
-endif(BAYESTRACKING_BUILD_EXAMPLES)
+add_subdirectory(examples)
 
 ## Optional builds: documentation
 OPTION (BAYESTRACKING_BUILD_DOC "Generates API documentation" OFF)
