@@ -30,12 +30,12 @@ namespace MTRK {
 struct observation_t {
   FM::Vec vec;
   double time;
-  string flag;
+  string tag;
   // constructors
   observation_t() : vec(Empty), time(0.) {}
   observation_t(FM::Vec v) : vec(v) {}
   observation_t(FM::Vec v, double t) : vec(v), time(t) {}
-  observation_t(FM::Vec v, double t, string f) : vec(v), time(t), flag(f) {}
+  observation_t(FM::Vec v, double t, string f) : vec(v), time(t), tag(f) {}
 };
 
 typedef std::vector<observation_t> sequence_t;
@@ -58,6 +58,7 @@ public:
   typedef struct {
     unsigned long id;
     FilterType* filter;
+    string tag;
   } filter_t;
 
 private:
@@ -102,11 +103,11 @@ public:
    * Add a new observation
    * @param z Observation vector
    * @param time Timestamp
-   * @param flag Additional flags
+   * @param an optional tag use to distinguish objects from each other
    */
-  void addObservation(const FM::Vec& z, double time, string flag = "")
+  void addObservation(const FM::Vec& z, double time, string tag = "") 
   {
-      m_observations.push_back(observation_t(z, time, flag));
+      m_observations.push_back(observation_t(z, time, tag));
   }
 
   
@@ -198,6 +199,11 @@ private:
     addFilter(filter);
   }
 
+void addFilter(FilterType* filter, observation_t& observation)
+  {
+    filter_t f = {m_filterNum++, filter, observation.tag};
+    m_filters.push_back(f);
+  }
   
   void addFilter(FilterType* filter)
   {
@@ -215,12 +221,12 @@ private:
       return false;
 
     if (N != 0) { // observations and tracks, associate
-                                                              jpda::JPDA* jpda;
-                                                              vector< size_t > znum;  // this would contain the number of observations for each sensor
-                                                              if (alg == NNJPDA) {    /// NNJPDA data association (one sensor)
-                                                                znum.push_back(M);      // only one in this case
-                                                                jpda = new jpda::JPDA(znum, N);
-                                                              }
+	  jpda::JPDA* jpda;
+	  vector< size_t > znum;  // this would contain the number of observations for each sensor
+	  if (alg == NNJPDA) {    /// NNJPDA data association (one sensor)
+		znum.push_back(M);      // only one in this case
+		jpda = new jpda::JPDA(znum, N);
+	  }
 
       AssociationMatrix amat(M, N);
       int dim = om.z_size;
@@ -230,6 +236,17 @@ private:
         m_filters[j].filter->predict_observation(om, zp, Zp);
         S = Zp + om.Z;  // H*P*H' + R
         for (int i = 0; i < M; i++) {
+
+         // Only Check NN, NNJPDA tag associate not yet implemented
+         if (alg == NN) 
+         {
+           // Assign maximum cost if observations and trajectories labelled do not match
+           if (m_observations[i].tag != m_filters[j].tag) 
+           {
+             amat[i][j] = DBL_MAX;
+             continue;
+           }
+         }
           s = zp - m_observations[i].vec;
           om.normalise(s, zp);
           try {
@@ -238,10 +255,11 @@ private:
             }
             else {
               amat[i][j] = AM::correlation_log(s, S);
-                                                              if (alg == NNJPDA) {
-                                                                jpda->Omega[0][i][j+1] = true;
-                                                                jpda->Lambda[0][i][j+1] = jpda::logGauss(s, S);
-                                                              }
+              if (alg == NNJPDA) 
+              {
+                jpda->Omega[0][i][j+1] = true;
+                jpda->Lambda[0][i][j+1] = jpda::logGauss(s, S);
+              }
             }
           }
           catch (Bayesian_filter::Filter_exception& e) {
@@ -328,7 +346,7 @@ private:
           si->push_back(m_observations[*ui]);
           FilterType* filter;
           if (si->size() >= m_seqSize && initialize(filter, *si)) {  // there's a minimum number of sequential observations
-            addFilter(filter);
+            addFilter(filter, m_observations[*ui]);
             // remove sequence
             si = m_sequences.erase(si);
             matched = true;
