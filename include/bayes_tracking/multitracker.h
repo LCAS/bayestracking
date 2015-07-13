@@ -39,7 +39,7 @@ struct observation_t {
 };
 
 typedef std::vector<observation_t> sequence_t;
-typedef enum {NN, /*JPDA,*/ NNJPDA} association_t;
+typedef enum {NN, NN_LABELED, NNJPDA, /*NN_LABELED*/} association_t;
 
 // to be defined by user
 template<class FilterType>
@@ -238,7 +238,7 @@ void addFilter(FilterType* filter, observation_t& observation)
         for (int i = 0; i < M; i++) {
 
          // Only Check NN, NNJPDA tag associate not yet implemented
-         if (alg == NN) 
+         if (alg == NN_LABELED) 
          {
            // Assign maximum cost if observations and trajectories labelled do not match
            if (m_observations[i].tag != m_filters[j].tag) 
