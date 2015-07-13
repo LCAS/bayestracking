@@ -160,7 +160,7 @@ public:
   /**
    * Perform data association and update step for all the current filters, create new ones and remove those which are no more necessary
    * @param om Observation model
-   * @param alg Data association algorithm (NN, JPDA or NNJPDA)
+   * @param alg Data association algorithm (NN, NN_LABELED, NNJPDA, NN_LABELED)
    */
   template<class ObservationModelType>
   void process(ObservationModelType& om, association_t alg = NN)
@@ -237,7 +237,7 @@ void addFilter(FilterType* filter, observation_t& observation)
         S = Zp + om.Z;  // H*P*H' + R
         for (int i = 0; i < M; i++) {
 
-         // Only Check NN, NNJPDA tag associate not yet implemented
+         // Only Check NN_LABELED, NNJPDA_LABELED tag associate not yet implemented
          if (alg == NN_LABELED) 
          {
            // Assign maximum cost if observations and trajectories labelled do not match
@@ -269,7 +269,7 @@ void addFilter(FilterType* filter, observation_t& observation)
           }
         }
       }
-      if (alg == NN) {  /// NN data association
+      if (alg == NN || alg == NN_LABEL) {  /// NN data association
         amat.computeNN(CORRELATION_LOG);
         // record unmatched observations for possible candidates creation
         m_unmatched = amat.URow;
@@ -278,7 +278,7 @@ void addFilter(FilterType* filter, observation_t& observation)
             m_assignments.insert(std::make_pair(amat.NN[n].row, amat.NN[n].col));
         }
       }
-      else if (alg == NNJPDA) { /// NNJPDA data association (one sensor)
+      else if (alg == NNJPDA || NNJPDA_LABELED) { /// NNJPDA data association (one sensor)
         // compute associations
         jpda->getAssociations();
         jpda->getProbabilities();
@@ -295,7 +295,7 @@ void addFilter(FilterType* filter, observation_t& observation)
             m_unmatched.push_back(ai->z);
           }
         }
-                                                                  delete jpda;
+        delete jpda;
       }
       else {
         cerr << "###### Unknown association algorithm: " << alg << " #####\n";
