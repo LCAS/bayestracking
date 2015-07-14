@@ -39,7 +39,7 @@ struct observation_t {
 };
 
 typedef std::vector<observation_t> sequence_t;
-typedef enum {NN, NN_LABELED, NNJPDA, /*NN_LABELED*/} association_t;
+typedef enum {NN, NN_LABELED, NNJPDA, NNJPDA_LABELED} association_t;
 
 // to be defined by user
 template<class FilterType>
@@ -269,7 +269,7 @@ void addFilter(FilterType* filter, observation_t& observation)
           }
         }
       }
-      if (alg == NN || alg == NN_LABEL) {  /// NN data association
+      if (alg == NN || alg == NN_LABELED) {  /// NN data association
         amat.computeNN(CORRELATION_LOG);
         // record unmatched observations for possible candidates creation
         m_unmatched = amat.URow;
