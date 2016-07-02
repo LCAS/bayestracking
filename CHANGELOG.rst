@@ -8,8 +8,8 @@ Changelog for package bayes_tracking
 * Changing Licence to GPL
 * Contributors: Christian Dondrup
 
-Forthcoming
------------
+1.0.6 (2016-07-02)
+------------------
 * Update on bayestracking (`#16 <https://github.com/LCAS/bayestracking/issues/16>`_)
   * Added option to specify minimum number of observations, minimum interval between observations for new track creation and a variance limit for track deletion
   * Update on mullitracker.h
