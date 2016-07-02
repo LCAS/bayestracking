@@ -43,7 +43,7 @@ typedef enum {NN, /*JPDA,*/ NNJPDA} association_t;
 
 // to be defined by user
 template<class FilterType>
-extern bool isLost(const FilterType* filter);
+extern bool isLost(const FilterType* filter, double stdLimit = 1.0);
 
 template<class FilterType>
 extern bool initialize(FilterType* &filter, sequence_t& obsvSeq);
@@ -159,19 +159,22 @@ public:
   /**
    * Perform data association and update step for all the current filters, create new ones and remove those which are no more necessary
    * @param om Observation model
-   * @param alg Data association algorithm (NN, JPDA or NNJPDA)
+   * @param alg Data association algorithm (NN or NNJPDA)
+   * @param seqSize Minimum number of observations necessary for new track creation
+   * @param seqTime Minimum interval between observations for new track creation
+   * @param stdLimit Upper limit for the standard deviation of the estimated position
    */
   template<class ObservationModelType>
-  void process(ObservationModelType& om, association_t alg = NN)
+  void process(ObservationModelType& om, association_t alg = NN, unsigned int seqSize = 5, double seqTime = 0.2, double stdLimit = 1.0)
   {
     // data association
     if (dataAssociation(om, alg)) {
       // update
       observe(om);
     }
-    pruneTracks();
+    pruneTracks(stdLimit);
     if (m_observations.size())
-      createTracks(om);
+      createTracks(om, seqSize, seqTime);
     // finished
     cleanup();
   }
@@ -294,12 +297,12 @@ private:
   }
 
 
-  void pruneTracks()
+  void pruneTracks(double stdLimit = 1.0)
   {
     // remove lost tracks
     typename std::vector<filter_t>::iterator fi = m_filters.begin(), fiEnd = m_filters.end();
     while (fi != fiEnd) {
-      if (isLost(fi->filter)) {
+      if (isLost(fi->filter, stdLimit)) {
         delete fi->filter;
         fi = m_filters.erase(fi);
         fiEnd = m_filters.end();
@@ -311,8 +314,10 @@ private:
   }
 
 
+  // seqSize = Minimum number of unmatched observations to create new track hypothesis
+  // seqTime = Maximum time interval between these observations
   template<class ObservationModelType>
-  void createTracks(ObservationModelType& om)
+  void createTracks(ObservationModelType& om, unsigned int seqSize, double seqTime)
   {
     // create new tracks from unmatched observations
     std::vector<size_t>::iterator ui = m_unmatched.begin();
@@ -320,14 +325,14 @@ private:
       std::vector<sequence_t>::iterator si = m_sequences.begin();
       bool matched = false;
       while (si != m_sequences.end()) {
-        if (m_observations[*ui].time - si->back().time > m_seqTime) { // erase old unmatched observations
+        if (m_observations[*ui].time - si->back().time > seqTime) { // erase old unmatched observations
           si = m_sequences.erase(si);
         }
         else if (AM::mahalanobis(m_observations[*ui].vec, om.Z, si->back().vec, om.Z) <= AM::gate(om.z_size)) { // observation close to a previous one
           // add new track
           si->push_back(m_observations[*ui]);
           FilterType* filter;
-          if (si->size() >= m_seqSize && initialize(filter, *si)) {  // there's a minimum number of sequential observations
+          if (si->size() >= seqSize && initialize(filter, *si)) {  // there's a minimum number of sequential observations
             addFilter(filter);
             // remove sequence
             si = m_sequences.erase(si);
