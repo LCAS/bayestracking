@@ -8,6 +8,22 @@ Changelog for package bayes_tracking
 * Changing Licence to GPL
 * Contributors: Christian Dondrup
 
+Forthcoming
+-----------
+* Update on bayestracking (`#16 <https://github.com/LCAS/bayestracking/issues/16>`_)
+  * Added option to specify minimum number of observations, minimum interval between observations for new track creation and a variance limit for track deletion
+  * Update on mullitracker.h
+  Change the naming "varLimit" -> "stdLimit"
+  * Update simple_2d_tracking.cpp
+  Change naming "varLimit" -> "stdLimit"
+* Merge pull request `#11 <https://github.com/LCAS/bayestracking/issues/11>`_ from pet1330/master
+  Adapted to allow 3D tracking along side 2D
+* removed 3D from simple example
+* removed X_SIZE reference
+* re-implemented 2D functionality to allow merge
+* 3D version
+* Contributors: Christian Dondrup, Peter Lightbody, scosar
+
 1.0.5 (2014-10-29)
 ------------------
 * Merge pull request `#9 <https://github.com/LCAS/bayestracking/issues/9>`_ from LCAS/indigo-fix
