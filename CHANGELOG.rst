@@ -8,6 +8,11 @@ Changelog for package bayes_tracking
 * Changing Licence to GPL
 * Contributors: Christian Dondrup
 
+Forthcoming
+-----------
+* Revert "Update on bayestracking" (`#17 <https://github.com/LCAS/bayestracking/issues/17>`_)
+* Contributors: Marc Hanheide
+
 1.0.6 (2016-07-02)
 ------------------
 * Update on bayestracking (`#16 <https://github.com/LCAS/bayestracking/issues/16>`_)
