@@ -69,21 +69,15 @@ private:
   std::vector<FM::Vec> m_prevUnmatched; // previously unmatched observations
   std::map<int, int> m_assignments;     // assignment < observation, target >
   std::vector<sequence_t> m_sequences;  // vector of unmatched observation sequences
-  unsigned int m_seqSize;
-  double m_seqTime;
 
 public:
 
   /**
    * Constructor
-   * @param sequenceSize Minimum number of unmatched observations to create new track hypothesis
-   * @param sequenceTime Maximum time interval between these observations
    */
-  MultiTracker(unsigned int sequenceSize = 5, double sequenceTime = 0.2)
+  MultiTracker()
   {
     m_filterNum = 0;
-    m_seqSize = sequenceSize;
-    m_seqTime = sequenceTime;
   }
 
 
@@ -163,7 +157,7 @@ public:
    * @param alg Data association algorithm (NN, NN_LABELED, NNJPDA, NN_LABELED)
    */
   template<class ObservationModelType>
-  void process(ObservationModelType& om, association_t alg = NN)
+  void process(ObservationModelType& om, association_t alg = NN, unsigned int seqSize = 5, double seqTime = 0.2)
   {
     // data association
     if (dataAssociation(om, alg)) {
@@ -172,7 +166,7 @@ public:
     }
     pruneTracks();
     if (m_observations.size())
-      createTracks(om);
+      createTracks(om, seqSize, seqTime);
     // finished
     cleanup();
   }
@@ -330,7 +324,7 @@ void addFilter(FilterType* filter, observation_t& observation)
 
 
   template<class ObservationModelType>
-  void createTracks(ObservationModelType& om)
+  void createTracks(ObservationModelType& om, unsigned int seqSize, double seqTime)
   {
     // create new tracks from unmatched observations
     std::vector<size_t>::iterator ui = m_unmatched.begin();
@@ -338,14 +332,14 @@ void addFilter(FilterType* filter, observation_t& observation)
       std::vector<sequence_t>::iterator si = m_sequences.begin();
       bool matched = false;
       while (si != m_sequences.end()) {
-        if (m_observations[*ui].time - si->back().time > m_seqTime) { // erase old unmatched observations
+        if (m_observations[*ui].time - si->back().time > seqTime) { // erase old unmatched observations
           si = m_sequences.erase(si);
         }
         else if (AM::mahalanobis(m_observations[*ui].vec, om.Z, si->back().vec, om.Z) <= AM::gate(om.z_size)) { // observation close to a previous one
           // add new track
           si->push_back(m_observations[*ui]);
           FilterType* filter;
-          if (si->size() >= m_seqSize && initialize(filter, *si)) {  // there's a minimum number of sequential observations
+          if (si->size() >= seqSize && initialize(filter, *si)) {  // there's a minimum number of sequential observations
             addFilter(filter, m_observations[*ui]);
             // remove sequence
             si = m_sequences.erase(si);
