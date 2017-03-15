@@ -30,16 +30,16 @@ namespace MTRK {
 struct observation_t {
   FM::Vec vec;
   double time;
-  string flag;
+  string tag;
   // constructors
   observation_t() : vec(Empty), time(0.) {}
   observation_t(FM::Vec v) : vec(v) {}
   observation_t(FM::Vec v, double t) : vec(v), time(t) {}
-  observation_t(FM::Vec v, double t, string f) : vec(v), time(t), flag(f) {}
+  observation_t(FM::Vec v, double t, string f) : vec(v), time(t), tag(f) {}
 };
 
 typedef std::vector<observation_t> sequence_t;
-typedef enum {NN, /*JPDA,*/ NNJPDA} association_t;
+typedef enum {NN, NN_LABELED, NNJPDA, NNJPDA_LABELED} association_t;
 
 // to be defined by user
 template<class FilterType>
@@ -58,6 +58,7 @@ public:
   typedef struct {
     unsigned long id;
     FilterType* filter;
+    string tag;
   } filter_t;
 
 private:
@@ -68,21 +69,15 @@ private:
   std::vector<FM::Vec> m_prevUnmatched; // previously unmatched observations
   std::map<int, int> m_assignments;     // assignment < observation, target >
   std::vector<sequence_t> m_sequences;  // vector of unmatched observation sequences
-  unsigned int m_seqSize;
-  double m_seqTime;
 
 public:
 
   /**
    * Constructor
-   * @param sequenceSize Minimum number of unmatched observations to create new track hypothesis
-   * @param sequenceTime Maximum time interval between these observations
    */
-  MultiTracker(unsigned int sequenceSize = 5, double sequenceTime = 0.2)
+  MultiTracker()
   {
     m_filterNum = 0;
-    m_seqSize = sequenceSize;
-    m_seqTime = sequenceTime;
   }
 
 
@@ -102,11 +97,11 @@ public:
    * Add a new observation
    * @param z Observation vector
    * @param time Timestamp
-   * @param flag Additional flags
+   * @param an optional tag use to distinguish objects from each other
    */
-  void addObservation(const FM::Vec& z, double time, string flag = "")
+  void addObservation(const FM::Vec& z, double time, string tag = "") 
   {
-      m_observations.push_back(observation_t(z, time, flag));
+      m_observations.push_back(observation_t(z, time, tag));
   }
 
   
@@ -159,10 +154,10 @@ public:
   /**
    * Perform data association and update step for all the current filters, create new ones and remove those which are no more necessary
    * @param om Observation model
-   * @param alg Data association algorithm (NN, JPDA or NNJPDA)
+   * @param alg Data association algorithm (NN, NN_LABELED, NNJPDA, NN_LABELED)
    */
   template<class ObservationModelType>
-  void process(ObservationModelType& om, association_t alg = NN)
+  void process(ObservationModelType& om, association_t alg = NN, unsigned int seqSize = 5, double seqTime = 0.2)
   {
     // data association
     if (dataAssociation(om, alg)) {
@@ -171,7 +166,7 @@ public:
     }
     pruneTracks();
     if (m_observations.size())
-      createTracks(om);
+      createTracks(om, seqSize, seqTime);
     // finished
     cleanup();
   }
@@ -198,6 +193,11 @@ private:
     addFilter(filter);
   }
 
+void addFilter(FilterType* filter, observation_t& observation)
+  {
+    filter_t f = {m_filterNum++, filter, observation.tag};
+    m_filters.push_back(f);
+  }
   
   void addFilter(FilterType* filter)
   {
@@ -215,12 +215,12 @@ private:
       return false;
 
     if (N != 0) { // observations and tracks, associate
-                                                              jpda::JPDA* jpda;
-                                                              vector< size_t > znum;  // this would contain the number of observations for each sensor
-                                                              if (alg == NNJPDA) {    /// NNJPDA data association (one sensor)
-                                                                znum.push_back(M);      // only one in this case
-                                                                jpda = new jpda::JPDA(znum, N);
-                                                              }
+	  jpda::JPDA* jpda;
+	  vector< size_t > znum;  // this would contain the number of observations for each sensor
+	  if (alg == NNJPDA || NNJPDA_LABELED) {    /// NNJPDA data association (one sensor)
+		znum.push_back(M);      // only one in this case
+		jpda = new jpda::JPDA(znum, N);
+	  }
 
       AssociationMatrix amat(M, N);
       int dim = om.z_size;
@@ -230,6 +230,17 @@ private:
         m_filters[j].filter->predict_observation(om, zp, Zp);
         S = Zp + om.Z;  // H*P*H' + R
         for (int i = 0; i < M; i++) {
+
+         // Only Check NN_LABELED, NNJPDA_LABELED tag associate not yet implemented
+         if (alg == NN_LABELED || NNJPDA_LABELED) 
+         {
+           // Assign maximum cost if observations and trajectories labelled do not match
+           if (m_observations[i].tag != m_filters[j].tag) 
+           {
+             amat[i][j] = DBL_MAX;
+             continue;
+           }
+         }
           s = zp - m_observations[i].vec;
           om.normalise(s, zp);
           try {
@@ -238,10 +249,11 @@ private:
             }
             else {
               amat[i][j] = AM::correlation_log(s, S);
-                                                              if (alg == NNJPDA) {
-                                                                jpda->Omega[0][i][j+1] = true;
-                                                                jpda->Lambda[0][i][j+1] = jpda::logGauss(s, S);
-                                                              }
+              if (alg == NNJPDA || NNJPDA_LABELED) 
+              {
+                jpda->Omega[0][i][j+1] = true;
+                jpda->Lambda[0][i][j+1] = jpda::logGauss(s, S);
+              }
             }
           }
           catch (Bayesian_filter::Filter_exception& e) {
@@ -251,7 +263,7 @@ private:
           }
         }
       }
-      if (alg == NN) {  /// NN data association
+      if (alg == NN || alg == NN_LABELED) {  /// NN data association
         amat.computeNN(CORRELATION_LOG);
         // record unmatched observations for possible candidates creation
         m_unmatched = amat.URow;
@@ -260,7 +272,7 @@ private:
             m_assignments.insert(std::make_pair(amat.NN[n].row, amat.NN[n].col));
         }
       }
-      else if (alg == NNJPDA) { /// NNJPDA data association (one sensor)
+      else if (alg == NNJPDA || NNJPDA_LABELED) { /// NNJPDA data association (one sensor)
         // compute associations
         jpda->getAssociations();
         jpda->getProbabilities();
@@ -277,7 +289,7 @@ private:
             m_unmatched.push_back(ai->z);
           }
         }
-                                                                  delete jpda;
+        delete jpda;
       }
       else {
         cerr << "###### Unknown association algorithm: " << alg << " #####\n";
@@ -312,7 +324,7 @@ private:
 
 
   template<class ObservationModelType>
-  void createTracks(ObservationModelType& om)
+  void createTracks(ObservationModelType& om, unsigned int seqSize, double seqTime)
   {
     // create new tracks from unmatched observations
     std::vector<size_t>::iterator ui = m_unmatched.begin();
@@ -320,15 +332,15 @@ private:
       std::vector<sequence_t>::iterator si = m_sequences.begin();
       bool matched = false;
       while (si != m_sequences.end()) {
-        if (m_observations[*ui].time - si->back().time > m_seqTime) { // erase old unmatched observations
+        if (m_observations[*ui].time - si->back().time > seqTime) { // erase old unmatched observations
           si = m_sequences.erase(si);
         }
         else if (AM::mahalanobis(m_observations[*ui].vec, om.Z, si->back().vec, om.Z) <= AM::gate(om.z_size)) { // observation close to a previous one
           // add new track
           si->push_back(m_observations[*ui]);
           FilterType* filter;
-          if (si->size() >= m_seqSize && initialize(filter, *si)) {  // there's a minimum number of sequential observations
-            addFilter(filter);
+          if (si->size() >= seqSize && initialize(filter, *si)) {  // there's a minimum number of sequential observations
+            addFilter(filter, m_observations[*ui]);
             // remove sequence
             si = m_sequences.erase(si);
             matched = true;
