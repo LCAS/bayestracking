@@ -8,6 +8,20 @@ Changelog for package bayes_tracking
 * Changing Licence to GPL
 * Contributors: Christian Dondrup
 
+Forthcoming
+-----------
+* added cv_bridge to catkin build (`#18 <https://github.com/LCAS/bayestracking/issues/18>`_)
+* Tracking NN including labels (`#13 <https://github.com/LCAS/bayestracking/issues/13>`_)
+  * Tracking NN including labels
+  without auto formatting
+  * Implimented NN_LABELED
+  Restored default behaviour implimented another association algorithm
+  * Included NN_LABEL in Association Matrix
+  * correct mistyped word
+  * NNJPDA_LABEL implimented
+  * Added seq_size and seq_time
+* Contributors: Marc Hanheide, Peter Lightbody
+
 1.0.7 (2016-07-02)
 ------------------
 * Revert "Update on bayestracking" (`#17 <https://github.com/LCAS/bayestracking/issues/17>`_)
