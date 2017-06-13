@@ -8,6 +8,11 @@ find_package(catkin QUIET)
 ## Use catkin macros and include dirs
 if(catkin_FOUND)
   message(STATUS "Found catkin")
+
+  find_package(catkin REQUIRED 
+    cv_bridge
+  )
+
   catkin_package(
     INCLUDE_DIRS include 
     LIBRARIES ${PROJECT_NAME}
