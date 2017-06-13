@@ -8,8 +8,8 @@ Changelog for package bayes_tracking
 * Changing Licence to GPL
 * Contributors: Christian Dondrup
 
-Forthcoming
------------
+1.0.8 (2017-06-13)
+------------------
 * added cv_bridge to catkin build (`#18 <https://github.com/LCAS/bayestracking/issues/18>`_)
 * Tracking NN including labels (`#13 <https://github.com/LCAS/bayestracking/issues/13>`_)
   * Tracking NN including labels
