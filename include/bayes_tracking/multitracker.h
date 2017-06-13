@@ -189,7 +189,7 @@ private:
   void addFilter(const FM::Vec& initState, const FM::SymMatrix& initCov)
   {
     FilterType* filter = new FilterType(xSize);
-    filter.init(initState, initCov);
+    filter->init(initState, initCov);
     addFilter(filter);
   }
 
