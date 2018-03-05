@@ -217,7 +217,7 @@ void addFilter(FilterType* filter, observation_t& observation)
     if (N != 0) { // observations and tracks, associate
 	  jpda::JPDA* jpda;
 	  vector< size_t > znum;  // this would contain the number of observations for each sensor
-	  if (alg == NNJPDA || NNJPDA_LABELED) {    /// NNJPDA data association (one sensor)
+	  if (alg == NNJPDA || alg == NNJPDA_LABELED) {    /// NNJPDA data association (one sensor)
 		znum.push_back(M);      // only one in this case
 		jpda = new jpda::JPDA(znum, N);
 	  }
@@ -232,7 +232,7 @@ void addFilter(FilterType* filter, observation_t& observation)
         for (int i = 0; i < M; i++) {
 
          // Only Check NN_LABELED, NNJPDA_LABELED tag associate not yet implemented
-         if (alg == NN_LABELED || NNJPDA_LABELED) 
+         if (alg == NN_LABELED || alg == NNJPDA_LABELED) 
          {
            // Assign maximum cost if observations and trajectories labelled do not match
            if (m_observations[i].tag != m_filters[j].tag) 
@@ -249,7 +249,7 @@ void addFilter(FilterType* filter, observation_t& observation)
             }
             else {
               amat[i][j] = AM::correlation_log(s, S);
-              if (alg == NNJPDA || NNJPDA_LABELED) 
+              if (alg == NNJPDA || alg == NNJPDA_LABELED) 
               {
                 jpda->Omega[0][i][j+1] = true;
                 jpda->Lambda[0][i][j+1] = jpda::logGauss(s, S);
@@ -272,7 +272,7 @@ void addFilter(FilterType* filter, observation_t& observation)
             m_assignments.insert(std::make_pair(amat.NN[n].row, amat.NN[n].col));
         }
       }
-      else if (alg == NNJPDA || NNJPDA_LABELED) { /// NNJPDA data association (one sensor)
+      else if (alg == NNJPDA || alg == NNJPDA_LABELED) { /// NNJPDA data association (one sensor)
         // compute associations
         jpda->getAssociations();
         jpda->getProbabilities();
