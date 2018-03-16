@@ -9,10 +9,10 @@ grade: devel
 confinement: devmode
 
 parts:
-  ros-tutorials:
+  bayestracking:
     source: https://github.com/LCAS/bayestracking.git
     source-branch: master
     plugin: catkin
     rosdistro: kinetic
-    source-space: bayestracking/
+    source-space: .
     catkin-packages: [bayestracking]
