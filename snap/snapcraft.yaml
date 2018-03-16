@@ -11,8 +11,8 @@ confinement: devmode
 parts:
   ros-tutorials:
     source: https://github.com/LCAS/bayestracking.git
-    source-branch: kinetic-devel
+    source-branch: master
     plugin: catkin
-    rosdistro: master
+    rosdistro: kinetic
     source-space: bayestracking/
     catkin-packages: [bayestracking]
