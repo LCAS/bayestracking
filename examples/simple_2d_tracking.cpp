@@ -50,7 +50,7 @@ static double getTime()
 
 // rule to detect lost track
 template<class FilterType>
-bool MTRK::isLost(const FilterType* filter, double varLimit = 1.0) {
+bool MTRK::isLost(const FilterType* filter, double varLimit) {
   // track lost if var(x)+var(y) > varLimit
   if (filter->X(0,0) + filter->X(2,2) > sqr(varLimit))
     return true;
@@ -61,15 +61,15 @@ bool MTRK::isLost(const FilterType* filter, double varLimit = 1.0) {
 template<class FilterType>
 bool MTRK::initialize(FilterType* &filter, sequence_t& obsvSeq, observ_model_t om_flag) {
   assert(obsvSeq.size());
-  
+
   if (om_flag == CARTESIAN) {
     double dt = obsvSeq.back().time - obsvSeq.front().time;
     assert(dt); // dt must not be null
     FM::Vec v((obsvSeq.back().vec - obsvSeq.front().vec) / dt);
-    
+
     FM::Vec x(4);
     FM::SymMatrix X(4,4);
-    
+
     x[0] = obsvSeq.back().vec[0];
     x[1] = v[0];
     x[2] = obsvSeq.back().vec[1];
@@ -79,11 +79,11 @@ bool MTRK::initialize(FilterType* &filter, sequence_t& obsvSeq, observ_model_t o
     X(1,1) = sqr(1.5);
     X(2,2) = sqr(0.5);
     X(3,3) = sqr(1.5);
-    
+
     filter = new FilterType(4);
     filter->init(x, X);
   }
-  
+
   if (om_flag == POLAR) {
     double dt = obsvSeq.back().time - obsvSeq.front().time;
     assert(dt); // dt must not be null
@@ -91,10 +91,10 @@ bool MTRK::initialize(FilterType* &filter, sequence_t& obsvSeq, observ_model_t o
     double y2 = obsvSeq.back().vec[1]*sin(obsvSeq.back().vec[0]);
     double x1 = obsvSeq.front().vec[1]*cos(obsvSeq.front().vec[0]);
     double y1 = obsvSeq.front().vec[1]*sin(obsvSeq.front().vec[0]);
-    
+
     FM::Vec x(4);
     FM::SymMatrix X(4,4);
-    
+
     x[0] = x2;
     x[1] = (x2-x1)/dt;
     x[2] = y2;
@@ -104,7 +104,7 @@ bool MTRK::initialize(FilterType* &filter, sequence_t& obsvSeq, observ_model_t o
     X(1,1) = sqr(1.5);
     X(2,2) = sqr(0.5);
     X(3,3) = sqr(1.5);
-    
+
     filter = new FilterType(4);
     filter->init(x, X);
   }
@@ -135,7 +135,7 @@ int main(int argc, char *argv[]) {
     cerr << "Valid options are '-g' (text debug) and '-w' (visual debug)" << endl;
     exit(EXIT_FAILURE);
   }
-  
+
   MultiTracker<Filter, 4> mtrk;    // state [x, v_x, y, v_y]
   CVModel cvm(5.0, 5.0);           // CV model with sigma_x = sigma_y = 5.0
   CartesianModel ctm(1.0, 1.0);    // Cartesian observation model
@@ -194,7 +194,7 @@ int main(int argc, char *argv[]) {
     trkwin->setObject("T", filter.x[0], filter.x[2], atan2(filter.x[3], filter.x[1])/*orientation*/,
           TrackWin::RED, sqrt(filter.X(0,0)), sqrt(filter.X(2,2))/*std dev*/);
     trkwin->update(5);
-    
+
     usleep(SLEEP_TIME);
   }
 
@@ -217,7 +217,7 @@ int main(int argc, char *argv[]) {
         FM::Vec obsv(2);
 	double range = 3 * (i+1);
 	double angle = time / (i+1);
-        // counter-clockwise 
+        // counter-clockwise
 	if (om_flag == CARTESIAN) {
 	  obsv[0] = range * cos(angle);
 	  obsv[1] = range * sin(angle);
@@ -260,7 +260,7 @@ int main(int argc, char *argv[]) {
 	    trkwin->setObject(label, observation[1]*cos(observation[0]), observation[1]*sin(observation[0]), TrackWin::NO_ORIENTATION, TrackWin::GREY);
 	}
       }
-      
+
       // process observations (if available) and update tracks
       if (om_flag == CARTESIAN) {
 	mtrk.process(ctm, CARTESIAN, alg);
