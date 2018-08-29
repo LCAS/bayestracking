@@ -47,7 +47,7 @@ template<class FilterType>
 extern bool isLost(const FilterType* filter, double stdLimit = 1.0);
 
 template<class FilterType>
-extern bool initialize(FilterType* &filter, sequence_t& obsvSeq, observ_model_t om_flag);
+extern bool initialize(FilterType* &filter, sequence_t& obsvSeq, observ_model_t om_flag = CARTESIAN);
 
 /**
 	@author Nicola Bellotto <nick@robots.ox.ac.uk>
@@ -162,7 +162,7 @@ public:
    * @param stdLimit Upper limit for the standard deviation of the estimated position
    */
   template<class ObservationModelType>
-  void process(ObservationModelType& om, observ_model_t om_flag = CARTESIAN, association_t alg = NN, unsigned int seqSize = 5, double seqTime = 0.2, double stdLimit = 1.0)
+  void process(ObservationModelType& om, association_t alg = NN, unsigned int seqSize = 5, double seqTime = 0.2, double stdLimit = 1.0, observ_model_t om_flag = CARTESIAN)
   {
     // data association
     if (dataAssociation(om, alg)) {
@@ -171,7 +171,7 @@ public:
     }
     pruneTracks(stdLimit);
     if (m_observations.size())
-      createTracks(om, om_flag, seqSize, seqTime);
+      createTracks(om, seqSize, seqTime, om_flag);
     // finished
     cleanup();
   }
@@ -330,7 +330,7 @@ void addFilter(FilterType* filter, observation_t& observation)
     // seqSize = Minimum number of unmatched observations to create new track hypothesis
     // seqTime = Maximum time interval between these observations
   template<class ObservationModelType>
-  void createTracks(ObservationModelType& om, observ_model_t om_flag, unsigned int seqSize, double seqTime)
+  void createTracks(ObservationModelType& om, unsigned int seqSize, double seqTime, observ_model_t om_flag)
   {
     // create new tracks from unmatched observations
     std::vector<size_t>::iterator ui = m_unmatched.begin();

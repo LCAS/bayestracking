@@ -9,12 +9,9 @@ find_package(catkin QUIET)
 if(catkin_FOUND)
   message(STATUS "Found catkin")
 
-  find_package(catkin REQUIRED
-    cv_bridge
-  )
-
   find_package(catkin REQUIRED COMPONENTS
     roscpp
+    cv_bridge
   )
 
   catkin_package(
