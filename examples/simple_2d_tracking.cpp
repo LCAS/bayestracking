@@ -263,11 +263,11 @@ int main(int argc, char *argv[]) {
 
       // process observations (if available) and update tracks
       if (om_flag == CARTESIAN) {
-	mtrk.process(ctm, CARTESIAN, alg);
+	mtrk.process(ctm, alg, CARTESIAN);
       }
       if (om_flag == POLAR) {
 	plm.update(0, 0, 0);
-	mtrk.process(plm, POLAR, alg);
+	mtrk.process(plm, alg, POLAR);
       }
       //       mtrk.print();
     }
