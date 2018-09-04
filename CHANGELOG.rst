@@ -8,8 +8,8 @@ Changelog for package bayes_tracking
 * Changing Licence to GPL
 * Contributors: Christian Dondrup
 
-Forthcoming
------------
+1.1.0 (2018-09-04)
+------------------
 * support for Polar Models (`#22 <https://github.com/LCAS/bayestracking/issues/22>`_)
   * Added 2D Polar Observation Model
   * no default parameter values in redeclared functions
