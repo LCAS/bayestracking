@@ -6,18 +6,19 @@
 
   <maintainer email="cdondrup@lincoln.ac.uk">Christian Dondrup</maintainer>
   <maintainer email="mhanheide@lincoln.ac.uk">Marc Hanheide</maintainer>
-  
+
   <license>MIT</license>
 
   <url type="git">https://github.com/LCAS/bayestracking</url>
   <url type="doi">http://dx.doi.org/10.5281/zenodo.10318</url>
 
   <author email="nbellotto@lincoln.ac.uk">Nicola Bellotto</author>
-  
+
   <buildtool_depend>catkin</buildtool_depend>
   <build_depend>boost</build_depend>
   <build_depend>libblas-dev</build_depend>
   <build_depend>cv_bridge</build_depend>
+  <build_depend>roscpp</build_depend>
   <run_depend>boost</run_depend>
   <run_depend>libblas-dev</run_depend>
   <run_depend>cv_bridge</run_depend>

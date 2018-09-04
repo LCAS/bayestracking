@@ -9,12 +9,13 @@ find_package(catkin QUIET)
 if(catkin_FOUND)
   message(STATUS "Found catkin")
 
-  find_package(catkin REQUIRED 
+  find_package(catkin REQUIRED COMPONENTS
+    roscpp
     cv_bridge
   )
 
   catkin_package(
-    INCLUDE_DIRS include 
+    INCLUDE_DIRS include
     LIBRARIES ${PROJECT_NAME}
   )
   include_directories(
@@ -29,12 +30,12 @@ include_directories(
     include
 )
 ## Source files
-add_library(${PROJECT_NAME} STATIC 
-    src/bayes_tracking/associationmatrix.cpp 
-    src/bayes_tracking/ekfilter.cpp 
-    src/bayes_tracking/ukfilter.cpp 
-    src/bayes_tracking/pfilter.cpp 
-    src/bayes_tracking/trackwin.cpp 
+add_library(${PROJECT_NAME} STATIC
+    src/bayes_tracking/associationmatrix.cpp
+    src/bayes_tracking/ekfilter.cpp
+    src/bayes_tracking/ukfilter.cpp
+    src/bayes_tracking/pfilter.cpp
+    src/bayes_tracking/trackwin.cpp
     src/bayes_tracking/models.cpp
     src/bayes_tracking/BayesFilter/bayesFltAlg.cpp
     src/bayes_tracking/BayesFilter/bayesFlt.cpp

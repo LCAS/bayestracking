@@ -20,7 +20,7 @@
 
 #include "bayes_tracking/models.h"
 #include "bayes_tracking/BayesFilter/matSup.hpp"
-// #include <angle.hpp>
+#include "bayes_tracking/angle.h"
 #include <boost/numeric/ublas/io.hpp>
 #include <float.h>
 
@@ -155,7 +155,7 @@ void CVModel::init_GqG() const
 
 
 //*************************************************************************
-//                  2D CARTESIAN SUBTRACTION OBSERVATION MODEL
+//                  2D CARTESIAN OBSERVATION MODEL
 //*************************************************************************
 
 CartesianModel::CartesianModel(Float xSD, Float ySD) :
@@ -238,6 +238,110 @@ void CartesianModel::updateJacobian(const FM::Vec& x) {
 
 void CartesianModel::normalise(FM::Vec& z_denorm, const FM::Vec& z_from) const {
 }
+
+
+//*************************************************************************
+//                  2D POLAR OBSERVATION MODEL
+//*************************************************************************
+
+PolarModel::PolarModel(Float bSD, Float rSD) :
+   Linrz_correlated_observe_model(x_size, z_size),
+   Likelihood_observe_model(z_size),
+   z_pred(z_size),
+   li(z_size)
+{
+   Hx.clear();
+   // noise
+   Z.clear();
+   Z(0,0) = sqr(bSD);
+   Z(1,1) = sqr(rSD);
+}
+
+Bayes_base::Float
+ PolarModel::Likelihood_correlated::L(const Correlated_additive_observe_model& model, const FM::Vec& z, const FM::Vec& zp) const
+/*
+ * Definition of likelihood given an additive Gaussian observation model:
+ *  p(z|x) = exp(-0.5*(z-h(x))'*inv(Z)*(z-h(x))) / sqrt(2pi^nz*det(Z));
+ *  L(x) the the Likelihood L(x) doesn't depend on / sqrt(2pi^nz) for constant z size
+ * Precond: Observation Information: z,Z_inv,detZterm
+ */
+{
+   if (!zset)
+      Bayes_base::error (Logic_exception ("PolarModel used without Lz set"));
+               // Normalised innovation
+   zInnov = z;
+   model.normalise (zInnov, zp);
+   FM::noalias(zInnov) -= zp;
+
+   Float logL = scaled_vector_square(zInnov, Z_inv);
+   using namespace std;
+   return exp(Float(-0.5)*(logL + z.size()*log(2*M_PI) + logdetZ));   // normalized likelihood
+}
+
+
+void PolarModel::Likelihood_correlated::Lz (const Correlated_additive_observe_model& model)
+/* Set the observation zz and Z about which to evaluate the Likelihood function
+ * Postcond: Observation Information: z,Z_inv,detZterm
+ */
+{
+   zset = true;
+                  // Compute inverse of Z and its reciprocal condition number
+   Float detZ;
+   Float rcond = FM::UdUinversePD (Z_inv, detZ, model.Z);
+   model.rclimit.check_PD(rcond, "Z not PD in observe");
+                  // detZ > 0 as Z PD
+   using namespace std;
+   logdetZ = log(detZ);
+}
+
+
+Bayes_base::Float
+ PolarModel::Likelihood_correlated::scaled_vector_square(const FM::Vec& v, const FM::SymMatrix& V)
+/*
+ * Compute covariance scaled square inner product of a Vector: v'*V*v
+ */
+{
+   return FM::inner_prod(v, FM::prod(V,v));
+}
+
+
+const FM::Vec& PolarModel::h(const FM::Vec& x) const
+{
+   z_pred[0] = atan2(x[2] - sensor_y, x[0] - sensor_x) - sensor_phi;   // bearing
+   z_pred[1] = sqrt(sqr(x[0] - sensor_x) + sqr(x[2] - sensor_y));      // distance
+   
+   return z_pred;
+};
+   
+
+void PolarModel::update(const Float& sensor_x, const Float& sensor_y, const Float& sensor_phi)
+{
+   this->sensor_x = sensor_x;
+   this->sensor_y = sensor_y;
+   this->sensor_phi = sensor_phi;
+}
+
+
+void PolarModel::updateJacobian(const FM::Vec& x) {
+   // update Jacobian
+   double ds2 = sqr(x[0] - sensor_x) + sqr(x[2] - sensor_y);
+   
+   // Hx = | *  0  *  0 |
+   //      | *  0  *  0 |
+
+   Hx(0,0) = - (x[2] - sensor_y) / (ds2 + DBL_EPSILON);
+   Hx(0,2) = (x[0] - sensor_x) / (ds2 + DBL_EPSILON);
+
+   Hx(1,0) = (x[0] - sensor_x) / (sqrt(ds2) + DBL_EPSILON);
+   Hx(1,2) = (x[2] - sensor_y) / (sqrt(ds2) + DBL_EPSILON);
+}
+
+
+void PolarModel::normalise(FM::Vec& z_denorm, const FM::Vec& z_from) const
+{
+   z_denorm[0] = angleArith::angle<Float>(z_denorm[0]).from (z_from[0]);
+}
+
 
 //*************************************************************************
 //                      CV 3D PREDICTION MODEL
