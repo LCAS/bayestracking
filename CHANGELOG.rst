@@ -8,6 +8,20 @@ Changelog for package bayes_tracking
 * Changing Licence to GPL
 * Contributors: Christian Dondrup
 
+Forthcoming
+-----------
+* support for Polar Models (`#22 <https://github.com/LCAS/bayestracking/issues/22>`_)
+  * Added 2D Polar Observation Model
+  * no default parameter values in redeclared functions
+  * proper building
+  * Changes for backward-compatibility
+  * Backward-compatibility of example code
+* Fixed condition logic that caused label checks to always be used (`#21 <https://github.com/LCAS/bayestracking/issues/21>`_)
+* Update snapcraft.yaml
+* Update snapcraft.yaml
+* Update snapcraft.yaml
+* Contributors: Marc Hanheide, SeanTasker, Strands JENKINS Daemon
+
 1.0.8 (2017-06-13)
 ------------------
 * added cv_bridge to catkin build (`#18 <https://github.com/LCAS/bayestracking/issues/18>`_)
