@@ -8,8 +8,8 @@ Changelog for package bayes_tracking
 * Changing Licence to GPL
 * Contributors: Christian Dondrup
 
-Forthcoming
------------
+1.2.0 (2018-09-28)
+------------------
 * Flexible id associations (`#23 <https://github.com/LCAS/bayestracking/issues/23>`_)
   * fix to use local headers first
   * proper support for tagged tracking
