@@ -8,6 +8,15 @@ Changelog for package bayes_tracking
 * Changing Licence to GPL
 * Contributors: Christian Dondrup
 
+Forthcoming
+-----------
+* Flexible id associations (`#23 <https://github.com/LCAS/bayestracking/issues/23>`_)
+  * fix to use local headers first
+  * proper support for tagged tracking
+  * added tags tracking example
+  * fix bug to only assign if not named yet
+* Contributors: Marc Hanheide
+
 1.1.0 (2018-09-04)
 ------------------
 * support for Polar Models (`#22 <https://github.com/LCAS/bayestracking/issues/22>`_)
