@@ -393,7 +393,8 @@ void addFilter(FilterType* filter, observation_t& observation)
     typename std::map<int, int>::iterator ai, aiEnd = m_assignments.end();
     for (ai = m_assignments.begin(); ai != aiEnd; ai++) {
       m_filters[ai->second].filter->observe(om, m_observations[ai->first].vec);
-      m_filters[ai->second].tag = m_observations[ai->first].tag;
+      if (m_filters[ai->second].tag.length() == 0) // if filter stil anonymous, name it
+      	m_filters[ai->second].tag = m_observations[ai->first].tag;
     }
   }
 
