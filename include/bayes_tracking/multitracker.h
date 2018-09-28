@@ -21,6 +21,7 @@
 #include "bayes_tracking/associationmatrix.h"
 #include "bayes_tracking/jpda.h"
 #include <float.h>
+#include <stdio.h>
 
 using namespace Bayesian_filter;
 
@@ -236,16 +237,22 @@ void addFilter(FilterType* filter, observation_t& observation)
         S = Zp + om.Z;  // H*P*H' + R
         for (int i = 0; i < M; i++) {
 
-         // Only Check NN_LABELED, NNJPDA_LABELED tag associate not yet implemented
-         if (alg == NN_LABELED || alg == NNJPDA_LABELED) 
-         {
-           // Assign maximum cost if observations and trajectories labelled do not match
-           if (m_observations[i].tag != m_filters[j].tag) 
-           {
-             amat[i][j] = DBL_MAX;
-             continue;
-           }
-         }
+		    // Only Check NN_LABELED, NNJPDA_LABELED tag associate not yet implemented
+		    if (alg == NN_LABELED || alg == NNJPDA_LABELED) 
+		    {
+		    	// if either tag is empty, continue associating as if it was unlabelled
+		    	if (
+			       	m_observations[i].tag.length() == 0 ||
+			       	m_filters[j].tag.length() == 0
+			       	)
+		    		continue;
+		        // Assign maximum cost if observations and trajectories labelled do not match
+		        if (m_observations[i].tag != m_filters[j].tag) 
+		        {
+		        	amat[i][j] = DBL_MAX;
+		        	continue;
+		       	}
+		    }
           s = zp - m_observations[i].vec;
           om.normalise(s, zp);
           try {
@@ -346,7 +353,7 @@ void addFilter(FilterType* filter, observation_t& observation)
           si->push_back(m_observations[*ui]);
           FilterType* filter;
           if (si->size() >= seqSize && initialize(filter, *si, om_flag)) {  // there's a minimum number of sequential observations
-            addFilter(filter);
+            addFilter(filter, m_observations[*ui]);
             // remove sequence
             si = m_sequences.erase(si);
             matched = true;
@@ -386,6 +393,8 @@ void addFilter(FilterType* filter, observation_t& observation)
     typename std::map<int, int>::iterator ai, aiEnd = m_assignments.end();
     for (ai = m_assignments.begin(); ai != aiEnd; ai++) {
       m_filters[ai->second].filter->observe(om, m_observations[ai->first].vec);
+      if (m_filters[ai->second].tag.length() == 0) // if filter stil anonymous, name it
+      	m_filters[ai->second].tag = m_observations[ai->first].tag;
     }
   }
 

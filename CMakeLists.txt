@@ -19,16 +19,16 @@ if(catkin_FOUND)
     LIBRARIES ${PROJECT_NAME}
   )
   include_directories(
-    ${catkin_INCLUDE_DIRS}
+    include ${catkin_INCLUDE_DIRS}
   )
 else(catkin_FOUND)
     message(STATUS "NOT found catkin")
+    include_directories(
+        include
+    )
 endif(catkin_FOUND)
 
 ## Headers
-include_directories(
-    include
-)
 ## Source files
 add_library(${PROJECT_NAME} STATIC
     src/bayes_tracking/associationmatrix.cpp
