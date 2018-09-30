@@ -8,8 +8,8 @@ Changelog for package bayes_tracking
 * Changing Licence to GPL
 * Contributors: Christian Dondrup
 
-Forthcoming
------------
+1.3.0 (2018-09-30)
+------------------
 * fixed tag check for LABELED (`#24 <https://github.com/LCAS/bayestracking/issues/24>`_)
 * Contributors: Marc Hanheide
 
