@@ -242,37 +242,37 @@ void addFilter(FilterType* filter, observation_t& observation)
 		    {
 		    	// if either tag is empty, continue associating as if it was unlabelled
 		    	if (
-			       	m_observations[i].tag.length() == 0 ||
-			       	m_filters[j].tag.length() == 0
-			       	)
-		    		continue;
-		        // Assign maximum cost if observations and trajectories labelled do not match
-		        if (m_observations[i].tag != m_filters[j].tag) 
-		        {
-		        	amat[i][j] = DBL_MAX;
-		        	continue;
-		       	}
+			       	m_observations[i].tag.length() > 0 &&
+			       	m_filters[j].tag.length() > 0
+			       	) {
+			        // Assign maximum cost if observations and trajectories labelled do not match
+			        if (m_observations[i].tag != m_filters[j].tag) 
+			        {
+			        	amat[i][j] = DBL_MAX;
+			        	continue;
+			       	} 
+				}
 		    }
-          s = zp - m_observations[i].vec;
-          om.normalise(s, zp);
-          try {
-            if (AM::mahalanobis(s, S) > AM::gate(s.size())) {
-              amat[i][j] = DBL_MAX; // gating
+            s = zp - m_observations[i].vec;
+            om.normalise(s, zp);
+            try {
+	            if (AM::mahalanobis(s, S) > AM::gate(s.size())) {
+	              amat[i][j] = DBL_MAX; // gating
+	            }
+	            else {
+	                amat[i][j] = AM::correlation_log(s, S);
+	                if (alg == NNJPDA || alg == NNJPDA_LABELED) 
+	                {
+	                    jpda->Omega[0][i][j+1] = true;
+	                    jpda->Lambda[0][i][j+1] = jpda::logGauss(s, S);
+	                }
+	            }
             }
-            else {
-              amat[i][j] = AM::correlation_log(s, S);
-              if (alg == NNJPDA || alg == NNJPDA_LABELED) 
-              {
-                jpda->Omega[0][i][j+1] = true;
-                jpda->Lambda[0][i][j+1] = jpda::logGauss(s, S);
-              }
+            catch (Bayesian_filter::Filter_exception& e) {
+                cerr << "###### Exception in AssociationMatrix #####\n";
+                cerr << "Message: " << e.what() << endl;
+                amat[i][j] = DBL_MAX;  // set to maximum
             }
-          }
-          catch (Bayesian_filter::Filter_exception& e) {
-            cerr << "###### Exception in AssociationMatrix #####\n";
-            cerr << "Message: " << e.what() << endl;
-            amat[i][j] = DBL_MAX;  // set to maximum
-          }
         }
       }
       if (alg == NN || alg == NN_LABELED) {  /// NN data association
@@ -317,7 +317,7 @@ void addFilter(FilterType* filter, observation_t& observation)
     return false;
   }
 
-
+public:
   void pruneTracks(double stdLimit = 1.0)
   {
     // remove lost tracks
@@ -333,7 +333,7 @@ void addFilter(FilterType* filter, observation_t& observation)
       }
     }
   }
-
+private:
     // seqSize = Minimum number of unmatched observations to create new track hypothesis
     // seqTime = Maximum time interval between these observations
   template<class ObservationModelType>
