@@ -8,6 +8,15 @@ Changelog for package bayes_tracking
 * Changing Licence to GPL
 * Contributors: Christian Dondrup
 
+Forthcoming
+-----------
+* added pruneNamedTracks (`#25 <https://github.com/LCAS/bayestracking/issues/25>`_)
+  * fixed tag check for LABELED
+  * added pruneNamedTracks
+  * removed print
+  * pruning now works
+* Contributors: Marc Hanheide
+
 1.3.0 (2018-09-30)
 ------------------
 * fixed tag check for LABELED (`#24 <https://github.com/LCAS/bayestracking/issues/24>`_)
