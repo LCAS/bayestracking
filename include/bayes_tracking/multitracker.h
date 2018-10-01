@@ -357,7 +357,6 @@ public:
             if (min_named.count(fi->tag)) {
                 double std = sqrt(fi->filter->X(0,0) + fi->filter->X(2,2));
                 if (std > min_named[fi->tag]) {
-                    printf("delete %s\n", fi->tag.c_str());
                     delete fi->filter;
                     fi = m_filters.erase(fi);
                     fiEnd = m_filters.end();
