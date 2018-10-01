@@ -339,14 +339,17 @@ public:
     // remove lost tracks
     typename std::vector<filter_t>::iterator fi = m_filters.begin(), fiEnd = m_filters.end();
     std::map<std::string, double> min_named; 
+    std::map<std::string, long> best_named; 
     while (fi != fiEnd) {
         if (fi->tag.length() > 0) {
             if (min_named.count(fi->tag) == 0) {
                 min_named[fi->tag] = DBL_MAX;
+                best_named[fi->tag] = fi->id;
             }
             double std = sqrt(fi->filter->X(0,0) + fi->filter->X(2,2));
             if (std < min_named[fi->tag]) {
                 min_named[fi->tag] = std;
+                best_named[fi->tag] = fi->id;
             }
         }
         fi++;
@@ -355,8 +358,7 @@ public:
     while (fi != fiEnd) {
         if (fi->tag.length() > 0) {
             if (min_named.count(fi->tag)) {
-                double std = sqrt(fi->filter->X(0,0) + fi->filter->X(2,2));
-                if (std > min_named[fi->tag]) {
+                if (best_named[fi->tag] != fi->id) {
                     delete fi->filter;
                     fi = m_filters.erase(fi);
                     fiEnd = m_filters.end();
