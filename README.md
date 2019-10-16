@@ -19,4 +19,4 @@
 
 _by Nicola Bellotto <nbellotto@lincoln.ac.uk>_
 
-*cite with this DOI: [10.5281/zenodo.10318](http://dx.doi.org/10.5281/zenodo.10318)*
+*cite with this DOI: [10.5281/zenodo.15825](https://doi.org/10.5281/zenodo.15825)*
